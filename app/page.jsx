@@ -76,6 +76,79 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Featured Services Slip Boxes Section */}
+      <section className="landing-section" id="services-section" style={{ background: 'var(--bg-muted)', padding: '4rem 1.5rem' }}>
+        <div className="section-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div className="section-header" style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+            <div className="section-tag" style={{ display: 'inline-block', background: '#e0f2fe', color: '#0284c7', fontWeight: 700, fontSize: '0.8rem', padding: '4px 12px', borderRadius: '12px', marginBottom: '0.5rem' }}>What We Offer</div>
+            <h2 className="section-title" style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-dark)' }}>NIN Verification &amp; Official Slip Services</h2>
+            <p className="section-sub" style={{ color: 'var(--secondary)', fontSize: '0.95rem' }}>Click any slip card below to register and generate official NIN verification slips instantly.</p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.75rem' }}>
+            {/* Box 1: Premium NIN Slip (Green Sample) */}
+            <Link href="/signup" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+              <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '1.75rem 1.5rem', borderTop: '4px solid #0284c7', transition: 'transform 0.2s', cursor: 'pointer' }}>
+                <div>
+                  <div style={{ background: '#e0f2fe', color: '#0284c7', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', marginBottom: '1rem' }}>
+                    <i className="fa-solid fa-address-card"></i>
+                  </div>
+                  <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-dark)' }}>NIN Premium Slip</h3>
+                  <p style={{ margin: '0 0 1rem', color: 'var(--secondary)', fontSize: '0.875rem', lineHeight: '1.5' }}>High-resolution, plastic card format NIN Premium Slip design with enhanced security features.</p>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <span className="badge" style={{ background: '#e0f2fe', color: '#0284c7', fontWeight: 700, fontSize: '0.75rem' }}>Premium HD</span>
+                    <span className="badge" style={{ background: '#f1f5f9', color: '#475569', fontWeight: 600, fontSize: '0.75rem' }}>Card Format</span>
+                  </div>
+                </div>
+                <div style={{ marginTop: 'auto', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(0,0,0,0.06)', background: '#fff', padding: '4px' }}>
+                  <img src="/img/sample_premium_green.jpg" alt="Premium NIN Slip Sample" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '6px', objectFit: 'contain' }} />
+                </div>
+              </div>
+            </Link>
+
+            {/* Box 2: Standard NIN Slip (White Short Sample) */}
+            <Link href="/signup" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+              <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '1.75rem 1.5rem', borderTop: '4px solid #059669', transition: 'transform 0.2s', cursor: 'pointer' }}>
+                <div>
+                  <div style={{ background: '#d1fae5', color: '#059669', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', marginBottom: '1rem' }}>
+                    <i className="fa-solid fa-file-pdf"></i>
+                  </div>
+                  <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-dark)' }}>Standard NIN Slip</h3>
+                  <p style={{ margin: '0 0 1rem', color: 'var(--secondary)', fontSize: '0.875rem', lineHeight: '1.5' }}>One-click standard PDF NIN slip generation ready for instant printing and official usage.</p>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <span className="badge" style={{ background: '#d1fae5', color: '#059669', fontWeight: 700, fontSize: '0.75rem' }}>Standard Slip</span>
+                    <span className="badge" style={{ background: '#f1f5f9', color: '#475569', fontWeight: 600, fontSize: '0.75rem' }}>PDF Download</span>
+                  </div>
+                </div>
+                <div style={{ marginTop: 'auto', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(0,0,0,0.06)', background: '#fff', padding: '4px' }}>
+                  <img src="/img/sample_standard_white.jpg" alt="Standard NIN Slip Sample" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '6px', objectFit: 'contain' }} />
+                </div>
+              </div>
+            </Link>
+
+            {/* Box 3: Regular NIN Slip (Long NIMC Sample) */}
+            <Link href="/signup" style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+              <div className="card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '1.75rem 1.5rem', borderTop: '4px solid #7c3aed', transition: 'transform 0.2s', cursor: 'pointer' }}>
+                <div>
+                  <div style={{ background: '#f3e8ff', color: '#7c3aed', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', marginBottom: '1rem' }}>
+                    <i className="fa-solid fa-id-card"></i>
+                  </div>
+                  <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-dark)' }}>Regular NIN Slip</h3>
+                  <p style={{ margin: '0 0 1rem', color: 'var(--secondary)', fontSize: '0.875rem', lineHeight: '1.5' }}>Official NIMC National Identification Number landscape slip format with complete demographic verification details.</p>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <span className="badge" style={{ background: '#f3e8ff', color: '#7c3aed', fontWeight: 700, fontSize: '0.75rem' }}>Real-Time</span>
+                    <span className="badge" style={{ background: '#f1f5f9', color: '#475569', fontWeight: 600, fontSize: '0.75rem' }}>Instant Result</span>
+                  </div>
+                </div>
+                <div style={{ marginTop: 'auto', borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(0,0,0,0.06)', background: '#fff', padding: '4px' }}>
+                  <img src="/img/sample_regular_long.png" alt="Regular NIN Slip Sample" style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '6px', objectFit: 'contain' }} />
+                </div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section className="landing-section" id="pricing-section">
         <div className="section-container">
