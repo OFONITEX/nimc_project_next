@@ -3180,7 +3180,74 @@ p, span, label, td, th, input, select, textarea, button {
   }
 }
 
+@media (max-width: 768px) {
+  .landing-header {
+    padding: 0.75rem 1rem !important;
+    flex-wrap: nowrap !important;
+    gap: 0.5rem !important;
+  }
+
+  .landing-nav-links {
+    display: none !important;
+  }
+
+  .landing-header-actions {
+    gap: 0.4rem !important;
+  }
+
+  .landing-header-actions .btn {
+    padding: 0.45rem 0.75rem !important;
+    font-size: 0.775rem !important;
+  }
+
+  .brand-main {
+    font-size: 0.925rem !important;
+  }
+
+  .brand-sub {
+    font-size: 0.65rem !important;
+  }
+
+  .card, .auth-card, .login-card, .signup-card, .bvn-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+    padding: 1.5rem 1.25rem !important;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .hero-title {
+    font-size: 1.85rem !important;
+  }
+
+  .hero-desc {
+    font-size: 0.95rem !important;
+  }
+
+  .hero-ctas {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .hero-ctas .btn {
+    width: 100% !important;
+  }
+
+  .main-content {
+    padding-bottom: 70px !important;
+  }
+}
+
 @media (max-width: 480px) {
+  body, html {
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
   .top-navbar {
     padding: 0 0.875rem !important;
     height: 58px !important;
@@ -3202,6 +3269,20 @@ p, span, label, td, th, input, select, textarea, button {
 
   .stats-grid {
     grid-template-columns: 1fr !important;
+  }
+
+  .landing-brand {
+    gap: 0.5rem !important;
+  }
+
+  .brand-icon {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .card {
+    padding: 1.25rem 1rem !important;
+    border-radius: 12px !important;
   }
 }
 
