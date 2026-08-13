@@ -3182,9 +3182,9 @@ p, span, label, td, th, input, select, textarea, button {
 
 @media (max-width: 768px) {
   .landing-header {
-    padding: 0.75rem 1rem !important;
-    flex-wrap: nowrap !important;
-    gap: 0.5rem !important;
+    padding: 0.65rem 0.85rem !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
   }
 
   .landing-nav-links {
@@ -3192,12 +3192,18 @@ p, span, label, td, th, input, select, textarea, button {
   }
 
   .landing-header-actions {
-    gap: 0.4rem !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+    margin-top: 0.5rem !important;
+    gap: 0.5rem !important;
   }
 
   .landing-header-actions .btn {
-    padding: 0.45rem 0.75rem !important;
-    font-size: 0.775rem !important;
+    flex: 1 !important;
+    text-align: center !important;
+    justify-content: center !important;
+    padding: 0.55rem 0.75rem !important;
+    font-size: 0.8rem !important;
   }
 
   .brand-main {
@@ -3213,7 +3219,7 @@ p, span, label, td, th, input, select, textarea, button {
     max-width: 100% !important;
     margin: 0 auto !important;
     box-sizing: border-box !important;
-    padding: 1.5rem 1.25rem !important;
+    padding: 1.25rem 1rem !important;
   }
 
   .form-grid {
@@ -3221,11 +3227,11 @@ p, span, label, td, th, input, select, textarea, button {
   }
 
   .hero-title {
-    font-size: 1.85rem !important;
+    font-size: 1.75rem !important;
   }
 
   .hero-desc {
-    font-size: 0.95rem !important;
+    font-size: 0.925rem !important;
   }
 
   .hero-ctas {
@@ -3238,7 +3244,18 @@ p, span, label, td, th, input, select, textarea, button {
   }
 
   .main-content {
-    padding-bottom: 70px !important;
+    padding-bottom: 75px !important;
+  }
+
+  .btn {
+    min-height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  input, select, textarea {
+    font-size: 16px !important;
   }
 }
 

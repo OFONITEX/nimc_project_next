@@ -184,15 +184,21 @@ export default function DashboardPage() {
                     <th style={{ padding: '0.75rem 1rem' }}>Target ID / Phone</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Amount</th>
                     <th style={{ padding: '0.75rem 1rem' }}>Date &amp; Time</th>
+                    <th style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {history.map((row) => (
                     <tr key={row.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                      <td style={{ padding: '0.75rem 1rem', fontWeight: 600 }}>{(row.verification_type || 'NIN').toUpperCase()}</td>
-                      <td style={{ padding: '0.75rem 1rem' }}>{row.nin_query || row.phone_query || '—'}</td>
+                      <td style={{ padding: '0.75rem 1rem', fontWeight: 600 }}>{(row.service_type || row.verification_type || 'NIN').toUpperCase()}</td>
+                      <td style={{ padding: '0.75rem 1rem' }}>{row.query_value || row.nin_query || row.phone_query || '—'}</td>
                       <td style={{ padding: '0.75rem 1rem', color: '#0284c7', fontWeight: 700 }}>₦{row.amount_charged || 300}</td>
                       <td style={{ padding: '0.75rem 1rem', color: 'var(--text-muted)' }}>{String(row.created_at || '').substring(0, 16).replace('T', ' ')}</td>
+                      <td style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>
+                        <Link href="/verify" className="btn btn-outline" style={{ fontSize: '0.75rem', padding: '3px 8px' }}>
+                          <i className="fa-solid fa-eye" style={{ marginRight: '4px' }}></i> View
+                        </Link>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
