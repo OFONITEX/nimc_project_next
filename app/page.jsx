@@ -160,21 +160,21 @@ export default function LandingPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
             <div className="card text-center" style={{ padding: '2rem', borderTop: '4px solid #0284c7' }}>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-dark)' }}>NIN Verification</div>
-              <div style={{ fontSize: '2rem', fontWeight: 900, color: '#0284c7', margin: '0.75rem 0' }}>₦300 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/ lookup</span></div>
-              <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>Standard NIN, Phone &amp; Demographic verification lookups</p>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-dark)' }}>Identity Verification</div>
+              <div style={{ fontSize: '2rem', fontWeight: 900, color: '#0284c7', margin: '0.75rem 0' }}>₦200 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/ lookup</span></div>
+              <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>Standard NIN &amp; BVN Verification lookups. FREE slip downloads (0 extra charges)!</p>
             </div>
 
             <div className="card text-center" style={{ padding: '2rem', borderTop: '4px solid #7c3aed' }}>
-              <div style={{ fontSize: '1.25rem', fontWeight 800, color: 'var(--text-dark)' }}>BVN Basic Slip</div>
-              <div style={{ fontSize: '2rem', fontWeight: 900, color: '#7c3aed', margin: '0.75rem 0' }}>₦200 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/ lookup</span></div>
-              <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>Basic BVN Verification &amp; PDF Slip Generation</p>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-dark)' }}>NIN Validation</div>
+              <div style={{ fontSize: '2rem', fontWeight: 900, color: '#7c3aed', margin: '0.75rem 0' }}>₦1,500 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/ request</span></div>
+              <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>Fixed ₦1,500 rate for No Record, SIM, Photo Error &amp; Modification Validation</p>
             </div>
 
             <div className="card text-center" style={{ padding: '2rem', borderTop: '4px solid #059669' }}>
-              <div style={{ fontSize: '1.25rem', fontWeight 800, color: 'var(--text-dark)' }}>BVN Plastic / Regular Pro</div>
-              <div style={{ fontSize: '2rem', fontWeight: 900, color: '#059669', margin: '0.75rem 0' }}>₦300 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/ lookup</span></div>
-              <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>Plastic Card &amp; Premium Regular Pro BVN Slips</p>
+              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-dark)' }}>NIN Personalization</div>
+              <div style={{ fontSize: '2rem', fontWeight: 900, color: '#059669', margin: '0.75rem 0' }}>₦1,000 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>/ slip</span></div>
+              <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>Personalized NIN slip generation using NIMC Enrollment Tracking ID</p>
             </div>
           </div>
         </div>
