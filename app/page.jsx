@@ -27,10 +27,10 @@ export default function LandingPage() {
 
         <div className="landing-header-actions">
           <Link href="/login" className="btn btn-primary" style={{ padding: '0.55rem 1.25rem', fontWeight: 600 }}>
-            <i className="fa-solid fa-right-to-bracket" style={{ marginRight: '4px' }}></i> Client Portal
+            <i className="fa-solid fa-right-to-bracket" style={{ marginRight: '4px' }}></i> Login
           </Link>
           <Link href="/signup" className="btn btn-outline" style={{ padding: '0.55rem 1.25rem', fontWeight: 600 }}>
-            Create Account
+            SignUp
           </Link>
         </div>
       </header>
@@ -49,10 +49,10 @@ export default function LandingPage() {
 
         <div className="hero-ctas">
           <Link href="/signup" className="btn btn-primary btn-lg" style={{ padding: '0.85rem 2rem', fontSize: '1.05rem' }}>
-            Get Started <i className="fa-solid fa-arrow-right" style={{ marginLeft: '6px' }}></i>
+            SignUp <i className="fa-solid fa-arrow-right" style={{ marginLeft: '6px' }}></i>
           </Link>
           <Link href="/login" className="btn btn-outline btn-lg" style={{ padding: '0.85rem 2rem', fontSize: '1.05rem' }}>
-            <i className="fa-solid fa-lock" style={{ marginRight: '6px' }}></i> Access Client Portal
+            <i className="fa-solid fa-right-to-bracket" style={{ marginRight: '6px' }}></i> Login
           </Link>
         </div>
 
