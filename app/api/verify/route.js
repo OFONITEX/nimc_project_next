@@ -22,7 +22,7 @@ export async function POST(request) {
       serviceCost = 300;
     }
 
-    // Call AgeVerify API
+    // Call Identity Verification Gateway API
     let payload = {};
     if (verification_type === 'phone' || !!phone_number) {
       payload = { phone_number };
@@ -46,8 +46,10 @@ export async function POST(request) {
     const ageData = await ageRes.json();
 
     if (!ageRes.ok || !ageData.success) {
+      const rawErrMsg = ageData.message || ageData.error || 'Verification query failed';
+      const cleanErrMsg = String(rawErrMsg).replace(/ageverify(\.com\.ng)?/gi, 'verification gateway');
       return NextResponse.json(
-        { success: false, error: ageData.message || ageData.error || 'Verification query failed' },
+        { success: false, error: cleanErrMsg },
         { status: ageRes.status || 400 }
       );
     }
