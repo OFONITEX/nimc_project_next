@@ -42,7 +42,14 @@ export interface VerificationHistoryItem {
   query_value?: string;
   nin_query?: string;
   phone_query?: string;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  expires_at?: string;
   amount_charged: number;
   status?: string;
+  photo_url?: string;
+  user_email?: string;
+  raw_response?: unknown;
   created_at: string;
 }

@@ -2,13 +2,9 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Eye, Clock, CheckCircle2, Search } from 'lucide-react';
+import { History, ShieldCheck, Eye, FolderOpen, Clock } from 'lucide-react';
 import { useGetVerificationHistoryQuery } from '@/redux/api/verificationApi';
-import { InsetPanel } from '@/components/ui/molecules/InsetPanel';
-import { Skeleton } from '@/components/ui/atoms/Skeleton';
 import { formatMoney } from '@/helpers/format/formatMoney';
-import { formatDateTime } from '@/helpers/format/formatDateTime';
-import { Button } from '@/components/ui/atoms/Button';
 
 export interface RecentActivityTableProps {
   userId: string;
@@ -19,90 +15,131 @@ export function RecentActivityTable({ userId }: RecentActivityTableProps) {
     skip: !userId,
   });
 
+  const [now, setNow] = React.useState(Date.now());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const getServiceBadgeStyle = (type?: string) => {
+    const t = (type || 'nin').toLowerCase();
+    if (t.includes('phone')) return 'bg-[#e0f7f4] text-[#00897b]';
+    if (t.includes('demo')) return 'bg-[#f3e5f5] text-[#8e24aa]';
+    if (t.includes('bvn')) return 'bg-[#e3f2fd] text-[#1565c0]';
+    return 'bg-[#e8f0fe] text-[#3c4fe0]';
+  };
+
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between px-1">
-        <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-          <Clock className="h-4 w-4 text-primary" />
-          Recent Verification Activity
-        </h3>
-        <Link
-          href="/logs"
-          className="text-xs font-semibold text-primary hover:underline hover:text-primary-hover"
-        >
-          View All Logs
-        </Link>
+    <div className="overflow-hidden rounded-xl border border-black/10 bg-white shadow-xs">
+      {/* Table Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-black/10 p-4 sm:px-6 sm:py-4 gap-2">
+        <div>
+          <h3 className="flex items-center gap-2 text-sm sm:text-base font-bold text-gray-900">
+            <History className="h-4 w-4 text-[#008751]" />
+            24-Hour Verification History
+          </h3>
+          <p className="text-[11px] sm:text-xs text-gray-400 mt-0.5">
+            Verifications from the past 24 hours (automatically cleared after 24h)
+          </p>
+        </div>
+        <span className="inline-flex items-center gap-1 rounded-full border border-[#008751]/20 bg-[#e6f5ed] px-3 py-1 text-[11px] font-bold text-[#008751]">
+          <ShieldCheck className="h-3.5 w-3.5" /> 24h Retention
+        </span>
       </div>
 
-      <InsetPanel
-        data-testid="recent-activity-panel"
-        footer={
-          history.length > 0 ? (
-            <span>Showing recent {history.length} verification record(s)</span>
-          ) : undefined
-        }
-      >
-        {isLoading ? (
-          <div className="p-6 space-y-4">
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
-            <Skeleton className="h-8 w-full" />
-          </div>
-        ) : isError ? (
-          <div className="p-8 text-center text-xs text-destructive">
-            Failed to load verification history. Please refresh the page.
-          </div>
-        ) : history.length === 0 ? (
-          <div className="p-12 text-center flex flex-col items-center justify-center">
-            <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground mb-3">
-              <Search className="h-6 w-6" />
-            </div>
-            <p className="text-sm font-semibold text-foreground">No verification records found</p>
-            <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-              Perform your first NIN or BVN lookup from the services menu above.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-border bg-muted/50 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
-                  <th className="px-4 py-3">Type</th>
-                  <th className="px-4 py-3">Target ID / Value</th>
-                  <th className="px-4 py-3">Amount</th>
-                  <th className="px-4 py-3">Date &amp; Time</th>
-                  <th className="px-4 py-3 text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/60">
-                {history.map((row) => (
-                  <tr key={row.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-4 py-3 font-bold text-foreground">
-                      {(row.service_type || row.verification_type || 'NIN').toUpperCase()}
+      {/* Table Body */}
+      {isLoading ? (
+        <div className="p-8 text-center text-xs text-gray-400">
+          <div className="mx-auto mb-2 h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-[#008751]" />
+          Loading 24h history...
+        </div>
+      ) : isError ? (
+        <div className="p-6 text-center text-xs font-semibold text-red-500">
+          Could not load verification history. Please refresh the page.
+        </div>
+      ) : history.length === 0 ? (
+        <div className="p-10 text-center flex flex-col items-center justify-center text-gray-500">
+          <FolderOpen className="h-10 w-10 text-gray-300 mb-2" />
+          <p className="text-sm font-bold text-gray-800">No verifications in the last 24 hours</p>
+          <p className="text-xs text-gray-400 mt-1 max-w-sm">
+            Your verified records will appear here for 24 hours after lookup.
+          </p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-black/10 bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500">
+                <th className="px-4 py-3">Time &amp; Expiry</th>
+                <th className="px-4 py-3">Service</th>
+                <th className="px-4 py-3">Target / Ref</th>
+                <th className="px-4 py-3">Verified Name</th>
+                <th className="px-4 py-3">Fee</th>
+                <th className="px-4 py-3 text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-black/5">
+              {history.map((row) => {
+                const createdMs = new Date(row.created_at).getTime();
+                const expireMs = row.expires_at
+                  ? new Date(row.expires_at).getTime()
+                  : createdMs + 24 * 60 * 60 * 1000;
+                const remainingMs = Math.max(0, expireMs - now);
+                const remHours = Math.floor(remainingMs / (1000 * 60 * 60));
+                const remMins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+                const timeRemainingStr =
+                  remainingMs > 0 ? `${remHours}h ${remMins}m left` : 'Expired';
+
+                const nameStr =
+                  [row.first_name, row.middle_name, row.last_name]
+                    .filter(Boolean)
+                    .join(' ') || '—';
+
+                return (
+                  <tr key={row.id} className="hover:bg-gray-50/80 transition-colors">
+                    <td className="px-4 py-3">
+                      <div className="font-bold text-gray-900">
+                        {new Date(row.created_at).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </div>
+                      <div className="flex items-center gap-1 text-[10px] font-medium text-amber-600">
+                        <Clock className="h-3 w-3" /> {timeRemainingStr}
+                      </div>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground font-mono">
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-block rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getServiceBadgeStyle(
+                          row.service_type || row.verification_type
+                        )}`}
+                      >
+                        {(row.service_type || row.verification_type || 'NIN').toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 font-mono font-semibold text-gray-800">
                       {row.query_value || row.nin_query || row.phone_query || '—'}
                     </td>
-                    <td className="px-4 py-3 font-black text-sky-600 dark:text-sky-400">
-                      {formatMoney(row.amount_charged || 300)}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {formatDateTime(row.created_at)}
+                    <td className="px-4 py-3 font-semibold text-gray-900">{nameStr}</td>
+                    <td className="px-4 py-3 font-extrabold text-[#008751]">
+                      {formatMoney(row.amount_charged || 200)}
                     </td>
                     <td className="px-4 py-3 text-center">
-                      <Link href="/verify">
-                        <Button variant="outline" size="sm" className="h-7 px-2.5 text-[11px]">
-                          <Eye className="mr-1 h-3 w-3" /> View
-                        </Button>
+                      <Link
+                        href="/verify"
+                        className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-gray-700 hover:border-[#008751] hover:text-[#008751] transition-colors"
+                      >
+                        <Eye className="h-3 w-3" /> View
                       </Link>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </InsetPanel>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

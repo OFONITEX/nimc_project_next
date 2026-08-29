@@ -3,10 +3,8 @@
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { loginSchema, LoginFormValues } from '@/schemas/auth';
-import { FormFieldInput } from '@/components/ui/molecules/FormFieldInput';
-import { Button } from '@/components/ui/atoms/Button';
 
 export interface LoginFormProps {
   onSubmit: (values: LoginFormValues) => Promise<void>;
@@ -16,7 +14,11 @@ export interface LoginFormProps {
 export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
   const [showPassword, setShowPassword] = React.useState(false);
 
-  const { control, handleSubmit } = useForm<LoginFormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
@@ -24,52 +26,74 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     },
   });
 
-  const toggleShowPassword = () => setShowPassword((prev) => !prev);
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-      <FormFieldInput
-        name="email"
-        control={control}
-        label="Email Address"
-        type="email"
-        placeholder="e.g. user@example.com"
-        autoComplete="email"
-        disabled={isLoading}
-        data-testid="login-email-input"
-      />
-
-      <div className="relative">
-        <FormFieldInput
-          name="password"
-          control={control}
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          placeholder="••••••••"
-          autoComplete="current-password"
-          disabled={isLoading}
-          data-testid="login-password-input"
-        />
-        <button
-          type="button"
-          onClick={toggleShowPassword}
-          className="absolute right-3 top-[34px] text-muted-foreground hover:text-foreground transition-colors"
-          aria-label={showPassword ? 'Hide password' : 'Show password'}
+      <div>
+        <label
+          htmlFor="email"
+          className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5"
         >
-          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-        </button>
+          Email Address
+        </label>
+        <input
+          id="email"
+          type="email"
+          placeholder="you@example.com"
+          autoComplete="email"
+          disabled={isLoading}
+          {...register('email')}
+          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-[#008751] focus:bg-white focus:ring-2 focus:ring-[#008751]/20 disabled:opacity-60"
+        />
+        {errors.email && (
+          <p className="mt-1 text-xs font-semibold text-red-500">{errors.email.message}</p>
+        )}
       </div>
 
-      <Button
+      <div>
+        <label
+          htmlFor="password"
+          className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5"
+        >
+          Password
+        </label>
+        <div className="relative">
+          <input
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Enter your password"
+            autoComplete="current-password"
+            disabled={isLoading}
+            {...register('password')}
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-11 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-[#008751] focus:bg-white focus:ring-2 focus:ring-[#008751]/20 disabled:opacity-60"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((p) => !p)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+        {errors.password && (
+          <p className="mt-1 text-xs font-semibold text-red-500">{errors.password.message}</p>
+        )}
+      </div>
+
+      <button
         type="submit"
-        variant="default"
-        fullWidth
-        isLoading={isLoading}
-        className="mt-2 h-11 text-base font-bold shadow-sm"
-        data-testid="login-submit-button"
+        disabled={isLoading}
+        className="w-full mt-2 rounded-xl bg-[#008751] py-3.5 text-sm font-bold text-white uppercase tracking-wider shadow-sm transition-all hover:bg-[#006b40] active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2"
       >
-        {isLoading ? 'Logging in...' : 'Log In to Portal'}
-      </Button>
+        {isLoading ? (
+          <>
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            Signing In...
+          </>
+        ) : (
+          'Sign In'
+        )}
+      </button>
     </form>
   );
 }
