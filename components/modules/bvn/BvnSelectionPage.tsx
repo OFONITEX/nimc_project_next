@@ -60,7 +60,7 @@ export function BvnSelectionPage() {
         {bvnOptions.map((opt) => (
           <Card
             key={opt.title}
-            className={`p-4 sm:p-5 flex flex-col justify-between border-t-4 ${opt.borderTop} shadow-2xs hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200`}
+            className={`p-3 sm:p-4 flex flex-col justify-between border-t-4 ${opt.borderTop} shadow-2xs hover:-translate-y-0.5 hover:shadow-xs transition-all duration-200`}
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">

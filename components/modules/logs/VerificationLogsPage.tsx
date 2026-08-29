@@ -97,13 +97,13 @@ export function VerificationLogsPage() {
         }
       >
         {isLoading ? (
-          <div className="p-4 space-y-3">
+          <div className="p-3 space-y-2.5">
             <Skeleton className="h-8 w-full" />
             <Skeleton className="h-8 w-full" />
             <Skeleton className="h-8 w-full" />
           </div>
         ) : filteredHistory.length === 0 ? (
-          <div className="p-8 text-center text-xs text-muted-foreground">
+          <div className="p-5 text-center text-xs text-muted-foreground">
             No verification audit logs match your search criteria.
           </div>
         ) : (

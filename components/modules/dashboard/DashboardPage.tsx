@@ -167,7 +167,7 @@ export function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-4 max-w-7xl mx-auto">
+    <div className="space-y-4 max-w-5xl mx-auto">
       {/* ── 1. Greeting Banner (Compact) ── */}
       <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[#004d2e] to-[#008751] px-4 py-3 sm:px-5 sm:py-3.5 text-white shadow-xs flex flex-row items-center justify-between gap-2">
         <div className="z-10 min-w-0">

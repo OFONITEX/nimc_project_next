@@ -55,7 +55,7 @@ export function StatusDialog({
       />
 
       {/* Dialog Card */}
-      <div className="relative z-50 w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-floating animate-in zoom-in-95">
+      <div className="relative z-50 w-full max-w-md rounded-2xl border border-border bg-card p-4 shadow-floating animate-in zoom-in-95">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
@@ -67,7 +67,7 @@ export function StatusDialog({
         <div className="flex flex-col items-center text-center">
           <div
             className={cn(
-              'mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border',
+              'mb-3 flex h-16 w-16 items-center justify-center rounded-2xl border',
               iconBg[type]
             )}
           >

@@ -102,7 +102,7 @@ export function VerifyNinPage() {
           </div>
 
           {/* Form Card */}
-          <Card className="p-4 sm:p-5 border-t-4 border-t-primary shadow-xs">
+          <Card className="p-3 sm:p-4 border-t-4 border-t-primary shadow-xs">
             {errorMessage && (
               <div className="mb-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-600">
                 <AlertCircle className="h-4 w-4 shrink-0" />

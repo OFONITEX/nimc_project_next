@@ -61,7 +61,7 @@ export function ContactSection() {
           </div>
 
           {/* Quick Contact Form */}
-          <Card className="p-6 sm:p-8 shadow-card border border-border">
+          <Card className="p-4 sm:p-5 shadow-card border border-border">
             <h3 className="text-base font-bold text-foreground mb-4">Send a Message</h3>
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
               <div>

@@ -25,7 +25,7 @@ export function AdminDashboardPage() {
   if (!isAdmin) {
     return (
       <ContentWidthContainer variant="narrow" className="py-8">
-        <Card className="p-6 text-center shadow-xs border border-border">
+        <Card className="p-4 text-center shadow-xs border border-border">
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
             <Lock className="h-6 w-6" />
           </div>
@@ -123,7 +123,7 @@ export function AdminDashboardPage() {
       )}
 
       {/* Add / Upgrade Agent Card */}
-      <Card className="p-4 sm:p-5 border-t-4 border-t-purple-600 shadow-xs">
+      <Card className="p-3 sm:p-4 border-t-4 border-t-purple-600 shadow-xs">
         <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-border/60">
           <UserPlus className="h-4 w-4 text-purple-600" />
           <h3 className="text-xs sm:text-sm font-bold text-foreground">

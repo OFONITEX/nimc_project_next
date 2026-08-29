@@ -59,7 +59,7 @@ export function VerifyResultCard({ data, onReset }: VerifyResultCardProps) {
         </div>
 
         {/* Card Body */}
-        <div className="p-4 sm:p-5 grid grid-cols-1 md:grid-cols-3 gap-4 bg-card">
+        <div className="p-3 sm:p-4 grid grid-cols-1 md:grid-cols-3 gap-3 bg-card">
           {/* Photo Column */}
           <div className="flex flex-col items-center justify-center p-3 border border-border rounded-xl bg-muted/30">
             <div className="h-36 w-28 overflow-hidden rounded-lg border border-primary/40 bg-muted shadow-2xs flex items-center justify-center">

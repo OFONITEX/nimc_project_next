@@ -76,8 +76,8 @@ export function ServicesSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((svc) => (
             <Link key={svc.title} href={svc.href} className="group">
-              <Card className="p-6 h-full flex flex-col justify-between hover:-translate-y-1 hover:shadow-md transition-all duration-200 border-border/80">
-                <div className="space-y-4">
+              <Card className="p-4 h-full flex flex-col justify-between hover:-translate-y-1 hover:shadow-md transition-all duration-200 border-border/80">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-card border border-border shadow-xs">
                       {svc.icon}

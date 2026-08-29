@@ -37,7 +37,7 @@ export function IpeClearancePage() {
         </p>
       </div>
 
-      <Card className="p-4 sm:p-6 border-t-4 border-t-teal-600 shadow-xs">
+      <Card className="p-3 sm:p-4 border-t-4 border-t-teal-600 shadow-xs">
         {result ? (
           <div className="text-center space-y-3 animate-in fade-in-50">
             <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 text-green-700">

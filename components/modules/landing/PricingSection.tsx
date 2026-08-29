@@ -74,11 +74,11 @@ export function PricingSection() {
           {plans.map((plan) => (
             <Card
               key={plan.title}
-              className={`p-6 sm:p-7 flex flex-col justify-between ${
+              className={`p-4 sm:p-5 flex flex-col justify-between ${
                 plan.popular ? 'border-2 border-primary shadow-lg bg-card' : 'border border-border/80'
               }`}
             >
-              <div className="space-y-5">
+              <div className="space-y-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h3 className="text-base sm:text-lg font-bold text-foreground">{plan.title}</h3>
