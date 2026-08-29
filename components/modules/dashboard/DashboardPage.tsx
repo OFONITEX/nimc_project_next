@@ -31,18 +31,6 @@ export function DashboardPage() {
   const isAdmin =
     currentUser?.email?.toLowerCase().trim() === 'brinoekanem@gmail.com' ||
     currentUser?.role === 'admin';
-  const isAgent = currentUser?.role === 'agent';
-  const isAgentOrAdmin = isAdmin || isAgent;
-
-  const getUserFee = () => {
-    if (isAdmin) return 100;
-    if (isAgent) return 150;
-    return 200;
-  };
-
-  const verifyPrice = '₦' + getUserFee();
-  const valPrice = isAgentOrAdmin ? '₦1,000' : '₦1,500';
-  const ipePrice = isAgentOrAdmin ? '₦600' : '₦1,500';
 
   React.useEffect(() => {
     if (!currentUser?.id) return;
@@ -111,7 +99,6 @@ export function DashboardPage() {
       color: 'text-[#2e7d32]',
       name: 'NIN Verification',
       desc: 'Verify NIN records',
-      price: verifyPrice,
     },
     {
       href: '/validation',
@@ -120,7 +107,6 @@ export function DashboardPage() {
       color: 'text-[#00695c]',
       name: 'NIN Validation',
       desc: 'Resolve NIN issues',
-      price: valPrice,
     },
     {
       href: '/personalization',
@@ -129,7 +115,6 @@ export function DashboardPage() {
       color: 'text-[#558b2f]',
       name: 'Personalization',
       desc: 'Update NIN details',
-      price: '₦1,000',
     },
     {
       href: '/bvn',
@@ -138,7 +123,6 @@ export function DashboardPage() {
       color: 'text-[#1565c0]',
       name: 'BVN Verification',
       desc: 'Verify BVN records',
-      price: verifyPrice,
     },
     {
       href: '/ipe',
@@ -147,7 +131,6 @@ export function DashboardPage() {
       color: 'text-[#e65100]',
       name: 'IPE Services',
       desc: 'Identity management',
-      price: ipePrice,
     },
     {
       href: '/jamb',
@@ -156,7 +139,6 @@ export function DashboardPage() {
       color: 'text-[#4527a0]',
       name: 'JAMB Services',
       desc: 'JAMB NIN linkage',
-      price: '₦1,000',
     },
     {
       href: '/correction',
@@ -165,7 +147,6 @@ export function DashboardPage() {
       color: 'text-[#880e4f]',
       name: 'Data Correction',
       desc: 'Fix incorrect records',
-      price: '₦5,000',
     },
     {
       href: '/ai',
@@ -174,7 +155,6 @@ export function DashboardPage() {
       color: 'text-[#283593]',
       name: 'AI Assistant',
       desc: 'Get identity help',
-      price: 'Free',
     },
   ];
 
@@ -199,7 +179,7 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* ── 2. Stat Cards Grid (Strict 2 Per Row on Mobile, 4 on Desktop, Fitted Sizing) ── */}
+      {/* ── 2. Stat Cards Grid (Strict 2 Per Row on Mobile, 4 on Desktop) ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
         {/* Wallet Card */}
         <div className="flex items-center gap-2.5 rounded-xl border border-black/10 bg-white px-3 py-2.5 sm:px-3.5 sm:py-3 shadow-2xs">
@@ -274,7 +254,7 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* ── 3. SERVICES Grid (2 Per Row on Mobile, 4 on Desktop, Fitted Box Heights) ── */}
+      {/* ── 3. SERVICES Grid (Exact Match to User Image: Icon + Title + Desc) ── */}
       <div>
         <div className="mb-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 px-0.5">
           Services
@@ -284,22 +264,17 @@ export function DashboardPage() {
             <Link
               key={s.name}
               href={s.href}
-              className="group rounded-xl border border-black/10 bg-white p-3 shadow-2xs transition-all hover:-translate-y-0.5 hover:border-[#008751]/40 flex flex-col justify-start"
+              className="group rounded-xl border border-black/10 bg-white p-3 shadow-2xs transition-all hover:-translate-y-0.5 hover:border-[#008751]/40 flex flex-col"
             >
-              <div className="flex items-center justify-between gap-1.5">
-                <div
-                  className={`flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg ${s.bg} ${s.color}`}
-                >
-                  {s.icon}
-                </div>
-                <span className="font-extrabold text-xs sm:text-sm text-[#008751] shrink-0">
-                  {s.price}
-                </span>
+              <div
+                className={`flex h-8 w-8 items-center justify-center rounded-lg ${s.bg} ${s.color} mb-2`}
+              >
+                {s.icon}
               </div>
-              <div className="font-bold text-xs sm:text-sm text-gray-900 leading-snug group-hover:text-[#008751] transition-colors truncate mt-2">
+              <div className="font-bold text-sm text-gray-900 leading-tight group-hover:text-[#008751] transition-colors">
                 {s.name}
               </div>
-              <div className="text-xs text-gray-500 leading-tight line-clamp-1 mt-0.5">
+              <div className="text-xs text-gray-500 leading-snug mt-1">
                 {s.desc}
               </div>
             </Link>
