@@ -48,14 +48,14 @@ export function VerifyNinPage() {
   };
 
   return (
-    <ContentWidthContainer variant="wide" className="space-y-6">
+    <ContentWidthContainer variant="wide" className="space-y-5">
       {/* Page Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-black tracking-tight text-foreground flex items-center gap-2.5">
-          <FileCheck2 className="h-6 w-6 text-primary shrink-0" />
+        <h2 className="text-lg sm:text-xl font-black tracking-tight text-foreground flex items-center gap-2">
+          <FileCheck2 className="h-5 w-5 text-primary shrink-0" />
           National Identity Number (NIN) Verification
         </h2>
-        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-0.5">
           Perform instant NIMC verification by NIN Number, Registered Phone Number, or Demographics.
         </p>
       </div>
@@ -63,9 +63,9 @@ export function VerifyNinPage() {
       {resultData ? (
         <VerifyResultCard data={resultData} onReset={handleReset} />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Verification Tabs */}
-          <div className="flex flex-wrap gap-2 border-b border-border/80 pb-3">
+          <div className="flex flex-wrap gap-2 border-b border-border/80 pb-2.5">
             <Button
               variant={activeTab === 'nin' ? 'default' : 'outline'}
               size="sm"
@@ -73,7 +73,7 @@ export function VerifyNinPage() {
                 setActiveTab('nin');
                 setErrorMessage(null);
               }}
-              className="gap-2 text-xs"
+              className="gap-1.5 text-xs h-8"
             >
               <Hash className="h-3.5 w-3.5" /> Verify by NIN
             </Button>
@@ -84,7 +84,7 @@ export function VerifyNinPage() {
                 setActiveTab('phone');
                 setErrorMessage(null);
               }}
-              className="gap-2 text-xs"
+              className="gap-1.5 text-xs h-8"
             >
               <Phone className="h-3.5 w-3.5" /> Verify by Phone
             </Button>
@@ -95,16 +95,16 @@ export function VerifyNinPage() {
                 setActiveTab('demo');
                 setErrorMessage(null);
               }}
-              className="gap-2 text-xs"
+              className="gap-1.5 text-xs h-8"
             >
               <FileCheck2 className="h-3.5 w-3.5" /> Verify by Demographics
             </Button>
           </div>
 
           {/* Form Card */}
-          <Card className="p-6 border-t-4 border-t-primary shadow-card">
+          <Card className="p-4 sm:p-5 border-t-4 border-t-primary shadow-xs">
             {errorMessage && (
-              <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive-light/60 p-3 text-xs text-destructive">
+              <div className="mb-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-600">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>{errorMessage}</span>
               </div>

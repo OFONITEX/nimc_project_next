@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { GraduationCap, CheckCircle2, AlertCircle } from 'lucide-react';
+import { GraduationCap, CheckCircle2 } from 'lucide-react';
 import { useAppSelector } from '@/redux/hooks';
 import { JambServiceFormValues } from '@/schemas/verification';
 import { Card } from '@/components/ui/atoms/Card';
@@ -30,31 +30,31 @@ export function JambServicesPage() {
   };
 
   return (
-    <ContentWidthContainer variant="narrow" className="space-y-6">
+    <ContentWidthContainer variant="narrow" className="space-y-5">
       <div className="text-center">
-        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-600">
-          <GraduationCap className="h-7 w-7" />
+        <div className="mx-auto mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
+          <GraduationCap className="h-6 w-6" />
         </div>
-        <h2 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+        <h2 className="text-lg sm:text-xl font-black tracking-tight text-foreground">
           JAMB UTME Services
         </h2>
-        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-0.5 max-w-sm mx-auto">
           Direct candidate profile code generation, UTME registration status, and NIMC validation.
         </p>
       </div>
 
-      <Card className="p-6 sm:p-8 border-t-4 border-t-indigo-600 shadow-card">
+      <Card className="p-4 sm:p-6 border-t-4 border-t-indigo-600 shadow-xs">
         {profileResult ? (
-          <div className="text-center space-y-4 animate-in fade-in-50">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-success/10 text-success">
-              <CheckCircle2 className="h-6 w-6" />
+          <div className="text-center space-y-3 animate-in fade-in-50">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 text-green-700">
+              <CheckCircle2 className="h-5 w-5" />
             </div>
-            <h3 className="text-base font-bold text-foreground">Profile Code Generated</h3>
-            <div className="p-4 rounded-xl bg-muted border border-border">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+            <h3 className="text-sm sm:text-base font-bold text-foreground">Profile Code Generated</h3>
+            <div className="p-3 rounded-lg bg-gray-50 border border-gray-200">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block">
                 10-Digit JAMB Profile Code
               </span>
-              <div className="text-2xl font-black text-indigo-600 tracking-widest font-mono mt-1">
+              <div className="text-xl font-black text-indigo-600 tracking-widest font-mono mt-0.5">
                 {profileResult.code}
               </div>
             </div>

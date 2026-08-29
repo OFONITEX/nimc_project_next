@@ -36,11 +36,11 @@ export function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#004d2e] via-[#007a47] to-[#00a85a] p-4 sm:p-6 font-sans">
-      <div className="w-full max-w-[480px] rounded-3xl bg-white p-7 sm:p-10 shadow-2xl border border-white/20">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#004d2e] via-[#007a47] to-[#00a85a] p-4 font-sans">
+      <div className="w-full max-w-[420px] rounded-2xl bg-white p-6 sm:p-7 shadow-xl border border-white/20">
         {/* Brand Header */}
-        <div className="flex flex-col items-center gap-2 mb-6">
-          <div className="h-14 w-14 overflow-hidden rounded-xl border border-gray-100 shadow-md">
+        <div className="flex flex-col items-center gap-1.5 mb-4">
+          <div className="h-11 w-11 overflow-hidden rounded-xl border border-gray-100 shadow-xs">
             <img
               src="/img/ofonitech_logo.jpg"
               alt="OFONiTech Logo"
@@ -48,24 +48,24 @@ export function LoginPage() {
             />
           </div>
           <div className="text-center">
-            <h2 className="text-lg sm:text-xl font-extrabold text-gray-900 tracking-tight">
+            <h2 className="text-base sm:text-lg font-extrabold text-gray-900 tracking-tight leading-tight">
               OFONiTech SOLUTIONZ
             </h2>
-            <span className="text-xs font-bold text-[#008751] tracking-wide">
+            <span className="text-[11px] font-bold text-[#008751] tracking-wide block">
               myninverify.com
             </span>
           </div>
         </div>
 
-        <div className="text-center mb-6">
-          <h3 className="text-xl font-black text-gray-900">Welcome back</h3>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1">
+        <div className="text-center mb-4">
+          <h3 className="text-lg font-black text-gray-900 leading-tight">Welcome back</h3>
+          <p className="text-xs text-gray-500 mt-0.5">
             Sign in to your myninverify account
           </p>
         </div>
 
         {errorMessage && (
-          <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3 text-xs font-medium text-red-600">
+          <div className="mb-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs font-medium text-red-600">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
@@ -73,7 +73,7 @@ export function LoginPage() {
 
         <LoginForm onSubmit={handleLoginSubmit} isLoading={isLoading} />
 
-        <div className="mt-6 border-t border-gray-100 pt-4 text-center text-xs text-gray-500">
+        <div className="mt-4 border-t border-gray-100 pt-3 text-center text-xs text-gray-500">
           Don&apos;t have an account?{' '}
           <Link
             href="/signup"

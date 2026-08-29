@@ -24,19 +24,19 @@ export function AdminDashboardPage() {
 
   if (!isAdmin) {
     return (
-      <ContentWidthContainer variant="narrow" className="py-12">
-        <Card className="p-8 text-center shadow-card border border-border">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
-            <Lock className="h-8 w-8" />
+      <ContentWidthContainer variant="narrow" className="py-8">
+        <Card className="p-6 text-center shadow-xs border border-border">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
+            <Lock className="h-6 w-6" />
           </div>
-          <h3 className="text-xl font-bold text-foreground">Access Restricted</h3>
-          <p className="mt-2 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+          <h3 className="text-lg font-bold text-foreground">Access Restricted</h3>
+          <p className="mt-1.5 text-xs text-muted-foreground leading-relaxed">
             This Admin &amp; Agent Management Portal is reserved exclusively for the primary administrator (
             <strong>brinoekanem@gmail.com</strong>).
           </p>
-          <div className="mt-6">
+          <div className="mt-4">
             <Link href="/dashboard">
-              <Button variant="default">Return to Dashboard</Button>
+              <Button variant="default" size="sm" className="text-xs">Return to Dashboard</Button>
             </Link>
           </div>
         </Card>
@@ -91,15 +91,15 @@ export function AdminDashboardPage() {
   };
 
   return (
-    <ContentWidthContainer variant="full" className="space-y-6">
+    <ContentWidthContainer variant="full" className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 className="text-xl sm:text-2xl font-black tracking-tight text-foreground flex items-center gap-2">
-            <Crown className="h-6 w-6 text-amber-500 shrink-0" />
+          <h2 className="text-lg sm:text-xl font-black tracking-tight text-foreground flex items-center gap-2">
+            <Crown className="h-5 w-5 text-amber-500 shrink-0" />
             Admin &amp; Agent Management Portal
           </h2>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             Configure agent roles, set custom lookup pricing, and manage registered operators.
           </p>
         </div>
@@ -107,10 +107,10 @@ export function AdminDashboardPage() {
 
       {statusMessage && (
         <div
-          className={`flex items-center gap-2.5 rounded-xl border p-3 text-xs ${
+          className={`flex items-center gap-2 rounded-lg border p-2.5 text-xs ${
             statusMessage.type === 'success'
-              ? 'border-success/20 bg-success-light/60 text-success'
-              : 'border-destructive/20 bg-destructive-light/60 text-destructive'
+              ? 'border-green-200 bg-green-50 text-green-700'
+              : 'border-red-200 bg-red-50 text-red-600'
           }`}
         >
           {statusMessage.type === 'success' ? (
@@ -123,10 +123,10 @@ export function AdminDashboardPage() {
       )}
 
       {/* Add / Upgrade Agent Card */}
-      <Card className="p-6 border-t-4 border-t-purple-600 shadow-card">
-        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border/60">
-          <UserPlus className="h-5 w-5 text-purple-600" />
-          <h3 className="text-sm font-bold text-foreground">
+      <Card className="p-4 sm:p-5 border-t-4 border-t-purple-600 shadow-xs">
+        <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-border/60">
+          <UserPlus className="h-4 w-4 text-purple-600" />
+          <h3 className="text-xs sm:text-sm font-bold text-foreground">
             Assign Agent Role &amp; Custom Pricing
           </h3>
         </div>
@@ -134,13 +134,13 @@ export function AdminDashboardPage() {
       </Card>
 
       {/* Users Roster Table */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between px-1">
-          <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between px-0.5">
+          <h3 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
             Registered Portal Users &amp; Agents
           </h3>
-          <Button variant="outline" size="sm" onClick={() => refetch()} className="text-xs">
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="text-xs h-8">
             Refresh Roster
           </Button>
         </div>

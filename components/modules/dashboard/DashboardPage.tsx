@@ -16,7 +16,6 @@ import {
   Bot,
   BookOpen,
   Headphones,
-  CheckCircle2,
 } from 'lucide-react';
 import { useAppSelector } from '@/redux/hooks';
 import { formatMoney } from '@/helpers/format/formatMoney';
@@ -107,7 +106,7 @@ export function DashboardPage() {
   const services = [
     {
       href: '/verify',
-      icon: <IdCard className="h-5 w-5" />,
+      icon: <IdCard className="h-4 w-4 sm:h-4.5 sm:w-4.5" />,
       bg: 'bg-[#e8f5e9]',
       color: 'text-[#2e7d32]',
       name: 'NIN Verification',
@@ -116,7 +115,7 @@ export function DashboardPage() {
     },
     {
       href: '/validation',
-      icon: <ShieldCheck className="h-5 w-5" />,
+      icon: <ShieldCheck className="h-4 w-4 sm:h-4.5 sm:w-4.5" />,
       bg: 'bg-[#e0f2f1]',
       color: 'text-[#00695c]',
       name: 'NIN Validation',
@@ -125,7 +124,7 @@ export function DashboardPage() {
     },
     {
       href: '/personalization',
-      icon: <PenTool className="h-5 w-5" />,
+      icon: <PenTool className="h-4 w-4 sm:h-4.5 sm:w-4.5" />,
       bg: 'bg-[#f1f8e9]',
       color: 'text-[#558b2f]',
       name: 'Personalization',
@@ -134,7 +133,7 @@ export function DashboardPage() {
     },
     {
       href: '/bvn',
-      icon: <CreditCard className="h-5 w-5" />,
+      icon: <CreditCard className="h-4 w-4 sm:h-4.5 sm:w-4.5" />,
       bg: 'bg-[#e3f2fd]',
       color: 'text-[#1565c0]',
       name: 'BVN Verification',
@@ -143,7 +142,7 @@ export function DashboardPage() {
     },
     {
       href: '/ipe',
-      icon: <FileText className="h-5 w-5" />,
+      icon: <FileText className="h-4 w-4 sm:h-4.5 sm:w-4.5" />,
       bg: 'bg-[#fff3e0]',
       color: 'text-[#e65100]',
       name: 'IPE Services',
@@ -152,7 +151,7 @@ export function DashboardPage() {
     },
     {
       href: '/jamb',
-      icon: <GraduationCap className="h-5 w-5" />,
+      icon: <GraduationCap className="h-4 w-4 sm:h-4.5 sm:w-4.5" />,
       bg: 'bg-[#ede7f6]',
       color: 'text-[#4527a0]',
       name: 'JAMB Services',
@@ -161,7 +160,7 @@ export function DashboardPage() {
     },
     {
       href: '/correction',
-      icon: <FileEdit className="h-5 w-5" />,
+      icon: <FileEdit className="h-4 w-4 sm:h-4.5 sm:w-4.5" />,
       bg: 'bg-[#fce4ec]',
       color: 'text-[#880e4f]',
       name: 'Data Correction',
@@ -170,7 +169,7 @@ export function DashboardPage() {
     },
     {
       href: '/ai',
-      icon: <Bot className="h-5 w-5" />,
+      icon: <Bot className="h-4 w-4 sm:h-4.5 sm:w-4.5" />,
       bg: 'bg-[#e8eaf6]',
       color: 'text-[#283593]',
       name: 'AI Assistant',
@@ -180,44 +179,43 @@ export function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      {/* ── 1. Greeting Banner (Matching myninverify.com) ── */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#004d2e] to-[#008751] p-6 sm:p-8 text-white shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        {/* Background decorative element */}
-        <div className="absolute -right-10 -top-14 h-48 w-48 rounded-full bg-white/5 pointer-events-none" />
+    <div className="space-y-5 max-w-7xl mx-auto">
+      {/* ── 1. Greeting Banner (Compact & Well-proportioned) ── */}
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[#004d2e] to-[#008751] px-4 py-4 sm:px-6 sm:py-5 text-white shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="absolute -right-8 -top-10 h-36 w-36 rounded-full bg-white/5 pointer-events-none" />
 
         <div className="z-10">
-          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+          <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
             Welcome, {displayName}
           </h2>
-          <p className="text-xs sm:text-sm text-white/80 mt-1">
+          <p className="text-xs text-white/80 mt-0.5">
             Welcome to your identity management portal
           </p>
         </div>
 
         <div className="z-10 text-left sm:text-right">
-          <div className="text-xs font-medium text-white/70">Wallet Balance</div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-0.5">
+          <div className="text-[11px] font-medium text-white/70">Wallet Balance</div>
+          <div className="text-xl sm:text-2xl font-black text-white tracking-tight">
             {formatMoney(liveBalance)}
           </div>
         </div>
       </div>
 
-      {/* ── 2. Stat Cards Grid (4 Cards) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* ── 2. Stat Cards Grid (Proportional & Fitted to Text) ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
         {/* Wallet Card */}
-        <div className="flex items-start gap-4 rounded-xl border border-black/10 bg-white p-5 shadow-xs transition-all hover:-translate-y-0.5 hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#008751] to-[#00b369] text-white shadow-xs">
-            <Wallet className="h-5 w-5" />
+        <div className="flex items-center gap-3 rounded-xl border border-black/10 bg-white p-3 sm:p-3.5 shadow-2xs transition-all hover:shadow-xs hover:-translate-y-0.5">
+          <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#008751] to-[#00b369] text-white shadow-2xs">
+            <Wallet className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
-          <div className="flex flex-col flex-1 overflow-hidden">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
+          <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 truncate">
               Wallet
             </span>
-            <span className="truncate text-xl sm:text-2xl font-extrabold text-gray-900 leading-tight mt-0.5">
+            <span className="truncate text-sm sm:text-base lg:text-lg font-black text-gray-900 leading-tight">
               {formatMoney(liveBalance)}
             </span>
-            <span className="text-xs font-semibold text-[#008751] mt-1">
+            <span className="text-[11px] font-semibold text-[#008751] leading-tight">
               <Link href="/fund" className="hover:underline">
                 Top up &rarr;
               </Link>
@@ -226,52 +224,52 @@ export function DashboardPage() {
         </div>
 
         {/* Today's Verifications Card */}
-        <div className="flex items-start gap-4 rounded-xl border border-black/10 bg-white p-5 shadow-xs transition-all hover:-translate-y-0.5 hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#3b82f6] to-[#2563eb] text-white shadow-xs">
-            <History className="h-5 w-5" />
+        <div className="flex items-center gap-3 rounded-xl border border-black/10 bg-white p-3 sm:p-3.5 shadow-2xs transition-all hover:shadow-xs hover:-translate-y-0.5">
+          <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#3b82f6] to-[#2563eb] text-white shadow-2xs">
+            <History className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
-          <div className="flex flex-col flex-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
-              Today&apos;s Verifications
+          <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 truncate">
+              Today&apos;s Lookups
             </span>
-            <span className="text-xl sm:text-2xl font-extrabold text-gray-900 leading-tight mt-0.5">
+            <span className="truncate text-sm sm:text-base lg:text-lg font-black text-gray-900 leading-tight">
               {todayCount}
             </span>
-            <span className="text-xs text-gray-400 mt-1">Past 24 hours</span>
+            <span className="text-[11px] text-gray-400 leading-tight">Past 24 hours</span>
           </div>
         </div>
 
         {/* Total Verifications Card */}
-        <div className="flex items-start gap-4 rounded-xl border border-black/10 bg-white p-5 shadow-xs transition-all hover:-translate-y-0.5 hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#f2a900] text-white shadow-xs">
-            <ShieldCheck className="h-5 w-5" />
+        <div className="flex items-center gap-3 rounded-xl border border-black/10 bg-white p-3 sm:p-3.5 shadow-2xs transition-all hover:shadow-xs hover:-translate-y-0.5">
+          <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#f59e0b] to-[#f2a900] text-white shadow-2xs">
+            <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
-          <div className="flex flex-col flex-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
+          <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 truncate">
               Total Verifications
             </span>
-            <span className="text-xl sm:text-2xl font-extrabold text-gray-900 leading-tight mt-0.5">
+            <span className="truncate text-sm sm:text-base lg:text-lg font-black text-gray-900 leading-tight">
               {totalCount}
             </span>
-            <span className="text-xs text-gray-400 mt-1">
-              {isAdmin ? 'All-time portal lookups' : 'All-time checks done'}
+            <span className="text-[11px] text-gray-400 leading-tight truncate">
+              {isAdmin ? 'All-time total' : 'All-time checks'}
             </span>
           </div>
         </div>
 
         {/* Quick Verify Card */}
-        <div className="flex items-start gap-4 rounded-xl border border-black/10 bg-white p-5 shadow-xs transition-all hover:-translate-y-0.5 hover:shadow-sm">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] text-white shadow-xs">
-            <Zap className="h-5 w-5" />
+        <div className="flex items-center gap-3 rounded-xl border border-black/10 bg-white p-3 sm:p-3.5 shadow-2xs transition-all hover:shadow-xs hover:-translate-y-0.5">
+          <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#8b5cf6] to-[#7c3aed] text-white shadow-2xs">
+            <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
-          <div className="flex flex-col flex-1">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
+          <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 truncate">
               Quick Verify
             </span>
-            <span className="text-base font-extrabold text-gray-900 leading-tight mt-1">
+            <span className="truncate text-xs sm:text-sm font-bold text-gray-900 leading-tight">
               NIN Lookup
             </span>
-            <span className="text-xs font-semibold text-[#008751] mt-1">
+            <span className="text-[11px] font-semibold text-[#008751] leading-tight">
               <Link href="/verify" className="hover:underline">
                 Start now &rarr;
               </Link>
@@ -280,26 +278,34 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* ── 3. SERVICES Grid ── */}
+      {/* ── 3. SERVICES Grid (Properly sized cards hugging text) ── */}
       <div>
-        <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-gray-400 px-0.5">
+        <div className="mb-2.5 text-[11px] font-bold uppercase tracking-widest text-gray-400 px-0.5">
           Services
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
           {services.map((s) => (
             <Link
               key={s.name}
               href={s.href}
-              className="flex flex-col gap-2.5 rounded-xl border border-black/10 bg-white p-4 text-left shadow-xs transition-all hover:-translate-y-1 hover:border-[#008751]/30 hover:shadow-md"
+              className="group flex flex-col justify-between rounded-xl border border-black/10 bg-white p-3 sm:p-3.5 text-left shadow-2xs transition-all hover:-translate-y-0.5 hover:border-[#008751]/40 hover:shadow-xs"
             >
-              <div
-                className={`flex h-10 w-10 items-center justify-center rounded-lg ${s.bg} ${s.color} shadow-2xs`}
-              >
-                {s.icon}
+              <div>
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-lg ${s.bg} ${s.color} mb-2 transition-transform group-hover:scale-105`}
+                >
+                  {s.icon}
+                </div>
+                <div className="font-bold text-xs sm:text-sm text-gray-900 leading-snug group-hover:text-[#008751] transition-colors">
+                  {s.name}
+                </div>
+                <div className="text-[11px] text-gray-500 leading-tight line-clamp-1 mt-0.5">
+                  {s.desc}
+                </div>
               </div>
-              <div className="font-bold text-sm text-gray-900 leading-snug">{s.name}</div>
-              <div className="text-xs text-gray-500 leading-relaxed line-clamp-2">{s.desc}</div>
-              <div className="mt-auto pt-1 font-extrabold text-xs text-[#008751]">{s.price}</div>
+              <div className="mt-2 pt-1 font-black text-xs text-[#008751] border-t border-black/5">
+                {s.price}
+              </div>
             </Link>
           ))}
         </div>
@@ -310,41 +316,47 @@ export function DashboardPage() {
 
       {/* ── 5. RESOURCES Section ── */}
       <div>
-        <div className="mb-3 text-[11px] font-bold uppercase tracking-widest text-gray-400 px-0.5">
+        <div className="mb-2.5 text-[11px] font-bold uppercase tracking-widest text-gray-400 px-0.5">
           Resources
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3.5">
           <Link
             href="/blog"
-            className="flex flex-col gap-2 rounded-xl border border-black/10 bg-white p-4 shadow-xs transition-all hover:-translate-y-1 hover:shadow-md"
+            className="flex items-center gap-3 rounded-xl border border-black/10 bg-white p-3 shadow-2xs transition-all hover:-translate-y-0.5 hover:shadow-xs"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#212121] text-white">
-              <BookOpen className="h-5 w-5" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#212121] text-white">
+              <BookOpen className="h-4 w-4" />
             </div>
-            <div className="font-bold text-sm text-gray-900">NIN Blog</div>
-            <div className="text-xs text-gray-500">Guides &amp; articles on Medium</div>
+            <div className="flex flex-col min-w-0">
+              <span className="font-bold text-xs sm:text-sm text-gray-900 truncate">NIN Blog</span>
+              <span className="text-[11px] text-gray-500 truncate">Guides &amp; articles on Medium</span>
+            </div>
           </Link>
 
           <Link
             href="/contact"
-            className="flex flex-col gap-2 rounded-xl border border-black/10 bg-white p-4 shadow-xs transition-all hover:-translate-y-1 hover:shadow-md"
+            className="flex items-center gap-3 rounded-xl border border-black/10 bg-white p-3 shadow-2xs transition-all hover:-translate-y-0.5 hover:shadow-xs"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#e8f5e9] text-[#2e7d32]">
-              <Headphones className="h-5 w-5" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#e8f5e9] text-[#2e7d32]">
+              <Headphones className="h-4 w-4" />
             </div>
-            <div className="font-bold text-sm text-gray-900">Contact &amp; Support</div>
-            <div className="text-xs text-gray-500">WhatsApp, email, social</div>
+            <div className="flex flex-col min-w-0">
+              <span className="font-bold text-xs sm:text-sm text-gray-900 truncate">Contact &amp; Support</span>
+              <span className="text-[11px] text-gray-500 truncate">WhatsApp, email, social</span>
+            </div>
           </Link>
 
           <Link
             href="/fund"
-            className="flex flex-col gap-2 rounded-xl border border-black/10 bg-white p-4 shadow-xs transition-all hover:-translate-y-1 hover:shadow-md"
+            className="flex items-center gap-3 rounded-xl border border-black/10 bg-white p-3 shadow-2xs transition-all hover:-translate-y-0.5 hover:shadow-xs"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#e6f5ed] text-[#008751]">
-              <Wallet className="h-5 w-5" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#e6f5ed] text-[#008751]">
+              <Wallet className="h-4 w-4" />
             </div>
-            <div className="font-bold text-sm text-gray-900">Fund Wallet</div>
-            <div className="text-xs text-gray-500">Add money for services</div>
+            <div className="flex flex-col min-w-0">
+              <span className="font-bold text-xs sm:text-sm text-gray-900 truncate">Fund Wallet</span>
+              <span className="text-[11px] text-gray-500 truncate">Add money for services</span>
+            </div>
           </Link>
         </div>
       </div>

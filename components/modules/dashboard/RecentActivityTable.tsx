@@ -31,38 +31,38 @@ export function RecentActivityTable({ userId }: RecentActivityTableProps) {
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-black/10 bg-white shadow-xs">
+    <div className="overflow-hidden rounded-xl border border-black/10 bg-white shadow-2xs">
       {/* Table Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-black/10 p-4 sm:px-6 sm:py-4 gap-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-black/10 px-4 py-3 sm:px-5 sm:py-3.5 gap-2">
         <div>
-          <h3 className="flex items-center gap-2 text-sm sm:text-base font-bold text-gray-900">
+          <h3 className="flex items-center gap-2 text-xs sm:text-sm font-bold text-gray-900">
             <History className="h-4 w-4 text-[#008751]" />
             24-Hour Verification History
           </h3>
-          <p className="text-[11px] sm:text-xs text-gray-400 mt-0.5">
+          <p className="text-[11px] text-gray-400 mt-0.5">
             Verifications from the past 24 hours (automatically cleared after 24h)
           </p>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full border border-[#008751]/20 bg-[#e6f5ed] px-3 py-1 text-[11px] font-bold text-[#008751]">
-          <ShieldCheck className="h-3.5 w-3.5" /> 24h Retention
+        <span className="inline-flex items-center gap-1 rounded-full border border-[#008751]/20 bg-[#e6f5ed] px-2.5 py-0.5 text-[10px] font-bold text-[#008751]">
+          <ShieldCheck className="h-3 w-3" /> 24h Retention
         </span>
       </div>
 
       {/* Table Body */}
       {isLoading ? (
-        <div className="p-8 text-center text-xs text-gray-400">
-          <div className="mx-auto mb-2 h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-[#008751]" />
+        <div className="p-6 text-center text-xs text-gray-400">
+          <div className="mx-auto mb-2 h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-[#008751]" />
           Loading 24h history...
         </div>
       ) : isError ? (
-        <div className="p-6 text-center text-xs font-semibold text-red-500">
+        <div className="p-4 text-center text-xs font-semibold text-red-500">
           Could not load verification history. Please refresh the page.
         </div>
       ) : history.length === 0 ? (
-        <div className="p-10 text-center flex flex-col items-center justify-center text-gray-500">
-          <FolderOpen className="h-10 w-10 text-gray-300 mb-2" />
-          <p className="text-sm font-bold text-gray-800">No verifications in the last 24 hours</p>
-          <p className="text-xs text-gray-400 mt-1 max-w-sm">
+        <div className="p-6 sm:p-8 text-center flex flex-col items-center justify-center text-gray-500">
+          <FolderOpen className="h-8 w-8 text-gray-300 mb-1.5" />
+          <p className="text-xs sm:text-sm font-bold text-gray-800">No verifications in the last 24 hours</p>
+          <p className="text-[11px] text-gray-400 mt-0.5 max-w-sm">
             Your verified records will appear here for 24 hours after lookup.
           </p>
         </div>
@@ -70,13 +70,13 @@ export function RecentActivityTable({ userId }: RecentActivityTableProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-black/10 bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500">
-                <th className="px-4 py-3">Time &amp; Expiry</th>
-                <th className="px-4 py-3">Service</th>
-                <th className="px-4 py-3">Target / Ref</th>
-                <th className="px-4 py-3">Verified Name</th>
-                <th className="px-4 py-3">Fee</th>
-                <th className="px-4 py-3 text-center">Action</th>
+              <tr className="border-b border-black/10 bg-gray-50 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-500">
+                <th className="px-3.5 py-2.5">Time &amp; Expiry</th>
+                <th className="px-3.5 py-2.5">Service</th>
+                <th className="px-3.5 py-2.5">Target / Ref</th>
+                <th className="px-3.5 py-2.5">Verified Name</th>
+                <th className="px-3.5 py-2.5">Fee</th>
+                <th className="px-3.5 py-2.5 text-center">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-black/5">
@@ -98,37 +98,37 @@ export function RecentActivityTable({ userId }: RecentActivityTableProps) {
 
                 return (
                   <tr key={row.id} className="hover:bg-gray-50/80 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="font-bold text-gray-900">
+                    <td className="px-3.5 py-2">
+                      <div className="font-bold text-gray-900 text-xs">
                         {new Date(row.created_at).toLocaleTimeString([], {
                           hour: '2-digit',
                           minute: '2-digit',
                         })}
                       </div>
                       <div className="flex items-center gap-1 text-[10px] font-medium text-amber-600">
-                        <Clock className="h-3 w-3" /> {timeRemainingStr}
+                        <Clock className="h-2.5 w-2.5" /> {timeRemainingStr}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3.5 py-2">
                       <span
-                        className={`inline-block rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getServiceBadgeStyle(
+                        className={`inline-block rounded px-2 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider ${getServiceBadgeStyle(
                           row.service_type || row.verification_type
                         )}`}
                       >
                         {(row.service_type || row.verification_type || 'NIN').toUpperCase()}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-mono font-semibold text-gray-800">
+                    <td className="px-3.5 py-2 font-mono font-semibold text-gray-800 text-xs">
                       {row.query_value || row.nin_query || row.phone_query || '—'}
                     </td>
-                    <td className="px-4 py-3 font-semibold text-gray-900">{nameStr}</td>
-                    <td className="px-4 py-3 font-extrabold text-[#008751]">
+                    <td className="px-3.5 py-2 font-semibold text-gray-900 text-xs">{nameStr}</td>
+                    <td className="px-3.5 py-2 font-black text-[#008751] text-xs">
                       {formatMoney(row.amount_charged || 200)}
                     </td>
-                    <td className="px-4 py-3 text-center">
+                    <td className="px-3.5 py-2 text-center">
                       <Link
                         href="/verify"
-                        className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-gray-700 hover:border-[#008751] hover:text-[#008751] transition-colors"
+                        className="inline-flex items-center gap-1 rounded-md border border-gray-200 bg-white px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold text-gray-700 hover:border-[#008751] hover:text-[#008751] transition-colors"
                       >
                         <Eye className="h-3 w-3" /> View
                       </Link>

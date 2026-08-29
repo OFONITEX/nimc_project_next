@@ -5,21 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
-import { FullSignupValues } from './SignupPage';
-
-const fullSignupSchema = z
-  .object({
-    surname: z.string().min(1, 'Surname is required'),
-    firstname: z.string().min(1, 'First name is required'),
-    othername: z.string().optional(),
-    email: z.string().email('Please enter a valid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    password_confirmation: z.string().min(6, 'Please confirm your password'),
-  })
-  .refine((data) => data.password === data.password_confirmation, {
-    message: "Passwords don't match",
-    path: ['password_confirmation'],
-  });
+import { FullSignupValues, fullSignupSchema } from '@/schemas/auth';
 
 export interface SignupFormProps {
   onSubmit: (values: FullSignupValues) => Promise<void>;

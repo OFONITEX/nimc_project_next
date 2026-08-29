@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { ShieldCheck, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useAppSelector } from '@/redux/hooks';
 import { NinValidationFormValues } from '@/schemas/verification';
 import { Card } from '@/components/ui/atoms/Card';
@@ -31,29 +31,29 @@ export function ValidationPage() {
   };
 
   return (
-    <ContentWidthContainer variant="narrow" className="space-y-6">
+    <ContentWidthContainer variant="narrow" className="space-y-5">
       <div className="text-center">
-        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600">
-          <ShieldCheck className="h-7 w-7" />
+        <div className="mx-auto mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
+          <ShieldCheck className="h-6 w-6" />
         </div>
-        <h2 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+        <h2 className="text-lg sm:text-xl font-black tracking-tight text-foreground">
           NIN Validation &amp; Clearing
         </h2>
-        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-0.5 max-w-sm mx-auto">
           Perform SIM link clearing, No-Record verification, and telecommunications backend sync.
         </p>
       </div>
 
-      <Card className="p-6 sm:p-8 border-t-4 border-t-emerald-600 shadow-card">
+      <Card className="p-4 sm:p-6 border-t-4 border-t-emerald-600 shadow-xs">
         {errorMessage && (
-          <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive-light/60 p-3 text-xs text-destructive">
+          <div className="mb-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs font-medium text-red-600">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
         )}
 
         {successResult && (
-          <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-success/20 bg-success-light/60 p-3 text-xs text-success">
+          <div className="mb-3 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-2.5 text-xs font-medium text-green-700">
             <CheckCircle2 className="h-4 w-4 shrink-0" />
             <span>{successResult}</span>
           </div>

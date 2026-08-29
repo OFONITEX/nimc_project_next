@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
-import { Wallet, ShieldCheck, CreditCard, Banknote, AlertCircle } from 'lucide-react';
+import { Wallet, ShieldCheck, CreditCard, AlertCircle } from 'lucide-react';
 import { useAppSelector } from '@/redux/hooks';
 import { Card } from '@/components/ui/atoms/Card';
 import { ContentWidthContainer } from '@/components/ui/molecules/ContentWidthContainer';
@@ -47,27 +47,27 @@ export function FundWalletPage() {
   };
 
   return (
-    <ContentWidthContainer variant="narrow" className="space-y-6">
+    <ContentWidthContainer variant="narrow" className="space-y-5">
       {/* Monnify SDK script */}
       <Script src="https://sdk.monnify.com/plugin/monnify.js" strategy="lazyOnload" />
 
       {/* Header */}
       <div className="text-center">
-        <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-          <Wallet className="h-7 w-7" />
+        <div className="mx-auto mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <Wallet className="h-6 w-6" />
         </div>
-        <h2 className="text-xl sm:text-2xl font-black tracking-tight text-foreground">
+        <h2 className="text-lg sm:text-xl font-black tracking-tight text-foreground">
           Fund User Wallet
         </h2>
-        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+        <p className="text-xs text-muted-foreground mt-0.5 max-w-sm mx-auto">
           Instant automated deposit via Card, USSD, or Bank Transfer
         </p>
       </div>
 
       {/* Form Card */}
-      <Card className="p-6 sm:p-8 border-t-4 border-t-primary shadow-card">
+      <Card className="p-4 sm:p-6 border-t-4 border-t-primary shadow-xs">
         {errorMessage && (
-          <div className="mb-4 flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive-light/60 p-3 text-xs text-destructive">
+          <div className="mb-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs font-medium text-red-600">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
@@ -76,14 +76,14 @@ export function FundWalletPage() {
         <FundWalletForm onSubmit={handleFundSubmit} isLoading={isLoading} />
 
         {/* Security badges */}
-        <div className="mt-8 pt-4 border-t border-border/60 grid grid-cols-2 gap-4 text-center">
+        <div className="mt-5 pt-3.5 border-t border-border/60 grid grid-cols-2 gap-3 text-center">
           <div className="flex flex-col items-center">
-            <ShieldCheck className="h-5 w-5 text-emerald-600 mb-1" />
+            <ShieldCheck className="h-4 w-4 text-emerald-600 mb-0.5" />
             <span className="text-[11px] font-bold text-foreground">Bank Grade Security</span>
             <span className="text-[10px] text-muted-foreground">256-bit SSL encrypted</span>
           </div>
           <div className="flex flex-col items-center">
-            <CreditCard className="h-5 w-5 text-sky-600 mb-1" />
+            <CreditCard className="h-4 w-4 text-sky-600 mb-0.5" />
             <span className="text-[11px] font-bold text-foreground">Instant Credit</span>
             <span className="text-[10px] text-muted-foreground">Automated wallet update</span>
           </div>
