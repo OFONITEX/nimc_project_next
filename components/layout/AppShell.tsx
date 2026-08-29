@@ -27,7 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col transition-all duration-300 lg:pl-[270px]">
         <Topbar />
-        <main className="flex-1 p-4 pb-24 sm:p-6 sm:pb-8 lg:p-8">
+        <main className="flex-1 p-2.5 pb-20 sm:p-5 sm:pb-8 lg:p-8">
           {children}
         </main>
         <MobileBottomNav />
