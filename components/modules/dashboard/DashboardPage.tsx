@@ -99,6 +99,7 @@ export function DashboardPage() {
       color: 'text-[#2e7d32]',
       name: 'NIN Verification',
       desc: 'Verify NIN records',
+      price: '₦100',
     },
     {
       href: '/validation',
@@ -107,6 +108,7 @@ export function DashboardPage() {
       color: 'text-[#00695c]',
       name: 'NIN Validation',
       desc: 'Resolve NIN issues',
+      price: '₦1,000',
     },
     {
       href: '/personalization',
@@ -115,6 +117,7 @@ export function DashboardPage() {
       color: 'text-[#558b2f]',
       name: 'Personalization',
       desc: 'Update NIN details',
+      price: '₦1,000',
     },
     {
       href: '/bvn',
@@ -123,6 +126,7 @@ export function DashboardPage() {
       color: 'text-[#1565c0]',
       name: 'BVN Verification',
       desc: 'Verify BVN records',
+      price: '₦100',
     },
     {
       href: '/ipe',
@@ -131,6 +135,7 @@ export function DashboardPage() {
       color: 'text-[#e65100]',
       name: 'IPE Services',
       desc: 'Identity management',
+      price: '₦600',
     },
     {
       href: '/jamb',
@@ -139,6 +144,7 @@ export function DashboardPage() {
       color: 'text-[#4527a0]',
       name: 'JAMB Services',
       desc: 'JAMB NIN linkage',
+      price: '₦1,000',
     },
     {
       href: '/correction',
@@ -147,6 +153,7 @@ export function DashboardPage() {
       color: 'text-[#880e4f]',
       name: 'Data Correction',
       desc: 'Fix incorrect records',
+      price: '₦5,000',
     },
     {
       href: '/ai',
@@ -155,6 +162,7 @@ export function DashboardPage() {
       color: 'text-[#283593]',
       name: 'AI Assistant',
       desc: 'Get identity help',
+      price: 'Free',
     },
   ];
 
@@ -180,7 +188,7 @@ export function DashboardPage() {
       </div>
 
       {/* ── 2. Stat Cards Grid (Strict 2 Per Row on Mobile, 4 on Desktop) ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 items-start">
         {/* Wallet Card */}
         <div className="flex items-center gap-2.5 rounded-xl border border-black/10 bg-white px-3 py-2.5 sm:px-3.5 sm:py-3 shadow-2xs">
           <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#008751] to-[#00b369] text-white shadow-2xs">
@@ -254,28 +262,31 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* ── 3. SERVICES Grid (Exact Match to User Image: Icon + Title + Desc) ── */}
+      {/* ── 3. SERVICES Grid ── */}
       <div>
-        <div className="mb-2 text-[11px] font-bold uppercase tracking-widest text-gray-400 px-0.5">
+        <div className="mb-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-400 px-0.5">
           Services
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-2.5 items-start">
           {services.map((s) => (
             <Link
               key={s.name}
               href={s.href}
-              className="group rounded-xl border border-black/10 bg-white p-3 shadow-2xs transition-all hover:-translate-y-0.5 hover:border-[#008751]/40 flex flex-col"
+              className="group rounded-lg border border-black/8 bg-white px-2.5 py-2 shadow-2xs transition-all hover:-translate-y-0.5 hover:border-[#008751]/40"
             >
               <div
-                className={`flex h-8 w-8 items-center justify-center rounded-lg ${s.bg} ${s.color} mb-2`}
+                className={`flex h-7 w-7 items-center justify-center rounded-md ${s.bg} ${s.color} mb-1.5`}
               >
                 {s.icon}
               </div>
-              <div className="font-bold text-sm text-gray-900 leading-tight group-hover:text-[#008751] transition-colors">
+              <div className="font-bold text-[13px] text-gray-900 leading-tight group-hover:text-[#008751] transition-colors">
                 {s.name}
               </div>
-              <div className="text-xs text-gray-500 leading-snug mt-1">
+              <div className="text-[11px] text-gray-500 leading-snug">
                 {s.desc}
+              </div>
+              <div className="text-xs font-extrabold text-[#008751] mt-1">
+                {s.price}
               </div>
             </Link>
           ))}
