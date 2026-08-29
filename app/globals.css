@@ -1,8 +1,6 @@
-/* 
-  style.css — myninverify Portal
-  NIN Clinic Portal Design System (Inter, warm cream, clean cards)
-  Vanilla CSS · No Tailwind/Bootstrap
-*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* ── Google Font: Inter ─────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -11,6 +9,47 @@
 :root {
   /* Brand */
   --primary:        #008751;
+  --primary-foreground: #ffffff;
+  --primary-hover:  #006b40;
+  --primary-light:  #e6f5ed;
+  --warning:        #F2A900;
+  --warning-foreground: #ffffff;
+  --warning-light:  #fef9e7;
+  --danger:         #ef4444;
+  --danger-light:   #fef2f2;
+  --destructive:    #ef4444;
+  --destructive-foreground: #ffffff;
+  --destructive-light: #fef2f2;
+  --info:           #3b82f6;
+  --success:        #22c55e;
+  --success-foreground: #ffffff;
+  --success-light:  #f0fdf4;
+
+  /* Neutrals & Surfaces */
+  --background:     #fcfbf8;
+  --foreground:     #1b1b1b;
+  --card:           #ffffff;
+  --card-foreground: #1b1b1b;
+  --popover:        #ffffff;
+  --popover-foreground: #1b1b1b;
+  --secondary:      #6b7280;
+  --secondary-foreground: #ffffff;
+  --muted:          #f5f4f0;
+  --muted-foreground: #9ca3af;
+  --accent:         #f5f4f0;
+  --accent-foreground: #1b1b1b;
+  --input:          rgba(0, 0, 0, 0.12);
+  --ring:           rgba(0, 135, 81, 0.4);
+  --radius:         0.75rem;
+
+  --bg-body:        #fcfbf8;   /* warm cream — matches Lovable */
+  --bg-surface:     #ffffff;
+  --bg-muted:       #f5f4f0;
+  --text-primary:   #1b1b1b;
+  --text-secondary: #6b7280;
+  --text-muted:     #9ca3af;
+  --border:         rgba(0, 0, 0, 0.08);
+  --border-focus:   rgba(0, 135, 81, 0.5);
   --primary-hover:  #006b40;
   --primary-light:  #e6f5ed;
   --warning:        #F2A900;
