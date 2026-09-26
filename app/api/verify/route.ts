@@ -49,23 +49,49 @@ export async function POST(request: NextRequest) {
       payload = { nin, slip_type: slip_type || 'standard' };
     }
 
-    const ageRes = await fetch('https://ageverify.com.ng/api/v1/verify', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${ageApiKey}`,
-      },
-      body: JSON.stringify(payload),
-    });
+    const endpoints = (verification_type === 'bvn' || !!bvn)
+      ? ['https://ageverify.com.ng/api/v1/verify']
+      : [
+          'https://ageverify.com.ng/api/v1/verify',
+          'https://ageverify.com.ng/api/v1/nin_phone_verify.php',
+        ];
 
-    const ageData = await ageRes.json();
+    let ageRes: Response | null = null;
+    let ageData: any = null;
 
-    if (!ageRes.ok || !ageData.success) {
-      const rawErrMsg = ageData.message || ageData.error || 'Verification query failed';
+    for (let i = 0; i < endpoints.length; i++) {
+      const endpoint = endpoints[i];
+      try {
+        ageRes = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${ageApiKey}`,
+            'x-api-key': ageApiKey,
+          },
+          body: JSON.stringify({
+            api_key: ageApiKey,
+            ...payload,
+            phone: phone_number,
+            number: phone_number || nin,
+          }),
+        });
+
+        ageData = await ageRes.json();
+        if (ageRes.ok && (ageData.success || ageData.status === true || ageData.status === 'success' || ageData.data)) {
+          break;
+        }
+      } catch (e) {
+        // try fallback endpoint
+      }
+    }
+
+    if (!ageRes || !ageRes.ok || (!ageData?.success && ageData?.status !== true && ageData?.status !== 'success' && !ageData?.data)) {
+      const rawErrMsg = ageData?.message || ageData?.error || 'Verification query failed';
       const cleanErrMsg = String(rawErrMsg).replace(/ageverify(\.com\.ng)?/gi, 'verification gateway');
       return NextResponse.json(
         { success: false, error: cleanErrMsg },
-        { status: ageRes.status || 400 }
+        { status: ageRes?.status || 400 }
       );
     }
 

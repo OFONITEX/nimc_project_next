@@ -45,6 +45,7 @@ export function ValidationForm({ onSubmit, isLoading }: ValidationFormProps) {
         >
           <option value="sim">SIM Card / Telco Validation</option>
           <option value="no_record">No-Record NIN Clearing</option>
+          <option value="photo">Photograph Error / Missing Photo</option>
           <option value="modification">Modification &amp; Data Update Synchronization</option>
         </select>
       </div>

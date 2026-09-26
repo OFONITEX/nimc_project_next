@@ -35,7 +35,7 @@ export const ninValidationSchema = z.object({
     .min(11, { message: 'NIN must be exactly 11 digits' })
     .max(11, { message: 'NIN must be exactly 11 digits' })
     .regex(/^\d+$/, { message: 'NIN must contain only numbers' }),
-  validationType: z.enum(['sim', 'no_record', 'modification']),
+  validationType: z.enum(['sim', 'no_record', 'photo', 'modification']),
   trackingId: z.string().optional(),
 });
 

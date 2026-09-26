@@ -9,11 +9,33 @@ import { MobileBottomNav } from './MobileBottomNav';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const currentUser = useAppSelector((state) => state.auth.currentUser);
   const isLoading = useAppSelector((state) => state.auth.isLoading);
 
-  // If user is on unauthenticated routes (e.g. landing, login, signup) or not logged in, render raw children
-  const isAuthOrPublicPage = pathname === '/' || pathname === '/login' || pathname === '/signup';
+  const cleanPath = (pathname?.replace(/\/+$/, '') || '') || '/';
+  const isAuthOrPublicPage =
+    cleanPath === '/' ||
+    cleanPath === '/login' ||
+    cleanPath === '/signup' ||
+    cleanPath === '/forgot-password' ||
+    cleanPath === '/reset-password';
+
+  React.useEffect(() => {
+    if (!isLoading && !currentUser && !isAuthOrPublicPage) {
+      router.replace('/login');
+    }
+  }, [isLoading, currentUser, isAuthOrPublicPage, router]);
+
+  React.useEffect(() => {
+    if (
+      !isLoading &&
+      currentUser &&
+      (cleanPath === '/login' || cleanPath === '/signup' || cleanPath === '/forgot-password')
+    ) {
+      router.replace('/dashboard');
+    }
+  }, [isLoading, currentUser, cleanPath, router]);
 
   if (isAuthOrPublicPage || !currentUser) {
     return <main className="min-h-screen">{children}</main>;

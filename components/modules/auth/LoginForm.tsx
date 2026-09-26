@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
@@ -42,7 +43,7 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
           autoComplete="email"
           disabled={isLoading}
           {...register('email')}
-          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-[#008751] focus:bg-white focus:ring-2 focus:ring-[#008751]/20 disabled:opacity-60"
+          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-base sm:text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-[#008751] focus:bg-white focus:ring-2 focus:ring-[#008751]/20 disabled:opacity-60"
         />
         {errors.email && (
           <p className="mt-1 text-xs font-semibold text-red-500">{errors.email.message}</p>
@@ -50,12 +51,20 @@ export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
       </div>
 
       <div>
-        <label
-          htmlFor="password"
-          className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5"
-        >
-          Password
-        </label>
+        <div className="flex items-center justify-between mb-1.5">
+          <label
+            htmlFor="password"
+            className="block text-xs font-bold text-gray-700 uppercase tracking-wider"
+          >
+            Password
+          </label>
+          <Link
+            href="/forgot-password"
+            className="text-xs font-semibold text-[#008751] hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
         <div className="relative">
           <input
             id="password"
