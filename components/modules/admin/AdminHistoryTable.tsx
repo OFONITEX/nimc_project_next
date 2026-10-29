@@ -203,13 +203,17 @@ Reference: ${item.reference || item.id || '—'}`;
                           <span className="inline-flex items-center gap-1 rounded-md bg-purple-50 px-2 py-0.5 text-[10px] font-bold text-purple-700 border border-purple-200">
                             <RefreshCw className="h-3 w-3 text-purple-600" /> REFUNDED
                           </span>
-                        ) : row.status === 'pending' || row.status === 'processing' ? (
-                          <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 border border-amber-200">
-                            <Clock className="h-3 w-3 text-amber-600" /> PENDING
+                        ) : row.status === 'processing' ? (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold text-blue-700 border border-blue-200">
+                            <Clock className="h-3 w-3 text-blue-600" /> IN PROGRESS
                           </span>
-                        ) : row.success !== false ? (
+                        ) : row.status === 'pending' || row.status === 'queued' ? (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 border border-amber-200">
+                            <Clock className="h-3 w-3 text-amber-600" /> QUEUED
+                          </span>
+                        ) : row.status === 'cleared' || row.success !== false ? (
                           <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
-                            <CheckCircle2 className="h-3 w-3" /> VERIFIED
+                            <CheckCircle2 className="h-3 w-3" /> CLEARED
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 rounded-md bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-700 border border-red-200">

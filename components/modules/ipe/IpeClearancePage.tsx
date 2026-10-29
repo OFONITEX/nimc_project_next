@@ -225,7 +225,7 @@ export function IpeClearancePage() {
       const resp = await fetch('/api/ipe-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-        body: JSON.stringify({ tracking_id: tid, reference: row.reference }),
+        body: JSON.stringify({ tracking_id: tid, reference: row.reference, batch_id: row.reference }),
       });
       const data = await resp.json();
 
@@ -272,7 +272,7 @@ export function IpeClearancePage() {
           const resp = await fetch('/api/ipe-status', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-            body: JSON.stringify({ tracking_id: tid }),
+            body: JSON.stringify({ tracking_id: tid, reference: row.reference, batch_id: row.reference }),
           });
           const data = await resp.json();
           if (data.refund?.new_balance !== undefined) dispatch(updateWalletBalance(data.refund.new_balance));
@@ -307,7 +307,7 @@ export function IpeClearancePage() {
     if (s.includes('clear') || s.includes('complete') || s.includes('success') || s.includes('approv') || s.includes('verified') || s.includes('passed')) {
       return (
         <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#dcfce7] text-[#15803d] border border-[#bbf7d0]">
-          Successful
+          Cleared
         </span>
       );
     }
@@ -325,16 +325,16 @@ export function IpeClearancePage() {
         </span>
       );
     }
-    if (s.includes('process') || s.includes('in-progress') || s.includes('review')) {
+    if (s.includes('process') || s.includes('in-progress') || s.includes('in progress') || s.includes('review') || s.includes('work')) {
       return (
         <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#e0f2fe] text-[#0369a1] border border-[#bae6fd]">
-          Processing
+          In Progress
         </span>
       );
     }
     return (
       <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold bg-[#fef3c7] text-[#b45309] border border-[#fde68a]">
-        Pending
+        Queued
       </span>
     );
   };
