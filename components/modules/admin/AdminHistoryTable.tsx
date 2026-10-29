@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Search, History, RefreshCw, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Search, History, RefreshCw, FileText, CheckCircle2, AlertCircle, Eye, Copy, Check, Clock, X } from 'lucide-react';
 import { AdminVerificationItem } from '@/redux/api/adminApi';
 import { Button } from '@/components/ui/atoms/Button';
 import { formatMoney } from '@/helpers/format/formatMoney';
@@ -11,11 +11,29 @@ export interface AdminHistoryTableProps {
   history: AdminVerificationItem[];
   isLoading: boolean;
   onRefresh: () => void;
+  defaultFilter?: string;
 }
 
-export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistoryTableProps) {
+export function AdminHistoryTable({ history, isLoading, onRefresh, defaultFilter = 'all' }: AdminHistoryTableProps) {
   const [searchTerm, setSearchTerm] = React.useState('');
-  const [serviceFilter, setServiceFilter] = React.useState('all');
+  const [serviceFilter, setServiceFilter] = React.useState(defaultFilter);
+  const [selectedRow, setSelectedRow] = React.useState<AdminVerificationItem | null>(null);
+  const [copied, setCopied] = React.useState(false);
+
+  React.useEffect(() => {
+    if (defaultFilter) {
+      setServiceFilter(defaultFilter);
+    }
+  }, [defaultFilter]);
+
+  const checkIsRefunded = (item: AdminVerificationItem) => {
+    return (
+      item.refunded === true ||
+      item.status === 'refunded' ||
+      item.status === 'no_record' ||
+      (item.reply && /refund|credited back/i.test(item.reply))
+    );
+  };
 
   const filteredHistory = React.useMemo(() => {
     return (history || []).filter((item) => {
@@ -26,10 +44,18 @@ export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistor
         (item.user_email || '').toLowerCase().includes(search) ||
         (item.first_name || '').toLowerCase().includes(search) ||
         (item.last_name || '').toLowerCase().includes(search) ||
+        (item.reference || '').toLowerCase().includes(search) ||
         (item.id || '').toLowerCase().includes(search);
 
       const sType = (item.service_type || 'nin').toLowerCase();
-      const matchesService = serviceFilter === 'all' || sType.includes(serviceFilter.toLowerCase());
+      const isRefunded = checkIsRefunded(item);
+
+      let matchesService = true;
+      if (serviceFilter === 'refunded') {
+        matchesService = !!isRefunded;
+      } else if (serviceFilter !== 'all') {
+        matchesService = sType.includes(serviceFilter.toLowerCase());
+      }
 
       return matchesSearch && matchesService;
     });
@@ -40,8 +66,27 @@ export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistor
     if (t.includes('phone')) return { bg: 'bg-teal-50 text-teal-700 border-teal-200', label: 'PHONE' };
     if (t.includes('demo')) return { bg: 'bg-purple-50 text-purple-700 border-purple-200', label: 'DEMO' };
     if (t.includes('bvn')) return { bg: 'bg-blue-50 text-blue-700 border-blue-200', label: 'BVN' };
+    if (t.includes('special')) return { bg: 'bg-amber-100 text-amber-900 border-amber-300', label: 'SPECIAL IPE' };
     if (t.includes('ipe')) return { bg: 'bg-amber-50 text-amber-700 border-amber-200', label: 'IPE' };
     return { bg: 'bg-emerald-50 text-emerald-700 border-emerald-200', label: 'NIN' };
+  };
+
+  const handleCopySummary = (item: AdminVerificationItem) => {
+    const isRef = checkIsRefunded(item);
+    const text = `Admin Follow-up Summary:
+Service: ${(item.service_type || 'NIN').toUpperCase()}
+Identifier / Query: ${item.query_value || item.reference || '—'}
+Customer Account: ${item.user_email || '—'}
+Amount: ${formatMoney(item.amount_charged || 0)}
+Status: ${isRef ? 'REFUNDED to Customer Wallet' : item.status || 'Verified'}
+Date: ${formatDateTime(item.created_at)}
+Provider Gateway Reply: ${item.reply || 'No provider remark available'}
+Reference: ${item.reference || item.id || '—'}`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
 
   return (
@@ -54,7 +99,7 @@ export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistor
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by NIN, Phone, Email, or Name..."
+            placeholder="Search by NIN, Tracking ID, Phone, Email, Reference..."
             className="h-9 w-full rounded-lg border border-black/10 bg-white pl-9 pr-3 text-xs text-gray-900 placeholder:text-gray-400 focus:border-[#008751] focus:outline-none focus:ring-1 focus:ring-[#008751]"
           />
         </div>
@@ -66,11 +111,12 @@ export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistor
             className="h-9 rounded-lg border border-black/10 bg-white px-2.5 text-xs font-semibold text-gray-700 focus:border-[#008751] focus:outline-none"
           >
             <option value="all">All Services</option>
-            <option value="nin">NIN Lookups</option>
+            <option value="refunded">💰 All Refunds / Follow-ups</option>
+            <option value="ipe">IPE Clearance</option>
             <option value="bvn">BVN Lookups</option>
             <option value="phone">Phone Lookups</option>
             <option value="demo">Demographic Lookups</option>
-            <option value="ipe">IPE Clearance</option>
+            <option value="nin">NIN Lookups</option>
           </select>
 
           <Button
@@ -95,9 +141,11 @@ export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistor
         ) : filteredHistory.length === 0 ? (
           <div className="p-8 text-center flex flex-col items-center justify-center text-gray-500">
             <FileText className="h-8 w-8 text-gray-300 mb-1.5" />
-            <p className="text-xs sm:text-sm font-bold text-gray-800">No verification records found</p>
+            <p className="text-xs sm:text-sm font-bold text-gray-800">No records found</p>
             <p className="text-[11px] text-gray-400 mt-0.5 max-w-sm">
-              {searchTerm || serviceFilter !== 'all'
+              {serviceFilter === 'refunded'
+                ? 'No refunded transactions found.'
+                : searchTerm || serviceFilter !== 'all'
                 ? 'Try adjusting your search criteria or filter.'
                 : 'Verification activities across the portal will stream here automatically.'}
             </p>
@@ -108,12 +156,13 @@ export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistor
               <thead>
                 <tr className="border-b border-black/10 bg-gray-50 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-gray-500">
                   <th className="px-3 py-2.5">Date &amp; Time</th>
-                  <th className="px-3 py-2.5">Operator Email</th>
+                  <th className="px-3 py-2.5">Customer Email</th>
                   <th className="px-3 py-2.5">Service</th>
                   <th className="px-3 py-2.5">Queried Value / ID</th>
                   <th className="px-3 py-2.5">Verified Citizen</th>
                   <th className="px-3 py-2.5">Fee</th>
                   <th className="px-3 py-2.5 text-center">Status</th>
+                  <th className="px-3 py-2.5 text-right">Follow-Up</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-black/5">
@@ -123,6 +172,7 @@ export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistor
                     [row.first_name, row.middle_name, row.last_name]
                       .filter(Boolean)
                       .join(' ') || '—';
+                  const isRefunded = checkIsRefunded(row);
 
                   return (
                     <tr key={row.id} className="hover:bg-gray-50/80 transition-colors">
@@ -144,10 +194,20 @@ export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistor
                         {fullName}
                       </td>
                       <td className="px-3 py-2 font-black text-[#008751] whitespace-nowrap">
-                        {formatMoney(row.amount_charged || 200)}
+                        {row.amount_charged === 0
+                          ? <span className="text-gray-400">₦0.00</span>
+                          : formatMoney(row.amount_charged || 200)}
                       </td>
                       <td className="px-3 py-2 text-center whitespace-nowrap">
-                        {row.success !== false ? (
+                        {isRefunded ? (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-purple-50 px-2 py-0.5 text-[10px] font-bold text-purple-700 border border-purple-200">
+                            <RefreshCw className="h-3 w-3 text-purple-600" /> REFUNDED
+                          </span>
+                        ) : row.status === 'pending' || row.status === 'processing' ? (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700 border border-amber-200">
+                            <Clock className="h-3 w-3 text-amber-600" /> PENDING
+                          </span>
+                        ) : row.success !== false ? (
                           <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
                             <CheckCircle2 className="h-3 w-3" /> VERIFIED
                           </span>
@@ -156,6 +216,17 @@ export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistor
                             <AlertCircle className="h-3 w-3" /> FAILED
                           </span>
                         )}
+                      </td>
+                      <td className="px-3 py-2 text-right whitespace-nowrap">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedRow(row)}
+                          className="h-7 px-2 text-[11px] font-bold text-gray-700 hover:text-black gap-1 border-gray-200"
+                        >
+                          <Eye className="h-3 w-3 text-[#2563eb]" />
+                          <span>{isRefunded ? 'Refund Info' : 'Details'}</span>
+                        </Button>
                       </td>
                     </tr>
                   );
@@ -168,11 +239,106 @@ export function AdminHistoryTable({ history, isLoading, onRefresh }: AdminHistor
         {/* Footer info */}
         <div className="border-t border-black/5 bg-gray-50 px-4 py-2 text-[11px] text-gray-500 flex items-center justify-between">
           <span>
-            Showing <strong>{filteredHistory.length}</strong> of <strong>{history.length}</strong> total verification records
+            Showing <strong>{filteredHistory.length}</strong> of <strong>{history.length}</strong> total records
           </span>
-          <span className="text-[10px] text-gray-400">All-time portal verification stream</span>
+          <span className="text-[10px] text-gray-400">All-time portal audit stream</span>
         </div>
       </div>
+
+      {/* Admin Follow-Up Details Modal */}
+      {selectedRow && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white border border-gray-200 shadow-2xl p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between border-b pb-3">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-[#008751]" />
+                <h3 className="text-base font-bold text-gray-900">
+                  {checkIsRefunded(selectedRow) ? 'Refund Follow-Up Details' : 'Verification Transaction Details'}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedRow(null)}
+                className="rounded-lg p-1 text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="grid grid-cols-2 gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400 block">Customer Account</span>
+                  <strong className="text-gray-900 break-all">{selectedRow.user_email || '—'}</strong>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400 block">Service Type</span>
+                  <strong className="text-gray-900 uppercase">{selectedRow.service_type || '—'}</strong>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400 block">Query Value / ID</span>
+                  <strong className="text-gray-900 font-mono">{selectedRow.query_value || '—'}</strong>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400 block">Amount Debited / Refunded</span>
+                  <strong className="text-[#008751] font-bold text-sm">
+                    {formatMoney(selectedRow.amount_charged || 0)}
+                  </strong>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400 block">Status</span>
+                  <div>
+                    {checkIsRefunded(selectedRow) ? (
+                      <span className="inline-flex items-center gap-1 rounded-md bg-purple-100 text-purple-800 font-bold px-2 py-0.5 text-[10px]">
+                        <RefreshCw className="h-3 w-3 text-purple-600" /> REFUNDED TO WALLET
+                      </span>
+                    ) : (
+                      <span className="font-bold text-gray-800 uppercase">{selectedRow.status || 'Verified'}</span>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-gray-400 block">Date &amp; Time</span>
+                  <span className="text-gray-700">{formatDateTime(selectedRow.created_at)}</span>
+                </div>
+              </div>
+
+              {/* Provider Remark / Reason */}
+              <div className="space-y-1">
+                <span className="text-[11px] font-bold uppercase text-gray-500 block">Provider Gateway Reply / Reason</span>
+                <div className="p-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 font-mono text-[11px] whitespace-pre-wrap break-words leading-relaxed">
+                  {selectedRow.reply || 'No provider response recorded.'}
+                </div>
+              </div>
+
+              {selectedRow.reference && (
+                <div className="flex items-center justify-between text-[11px] text-gray-500 pt-1">
+                  <span>Reference: <strong className="font-mono text-gray-800">{selectedRow.reference}</strong></span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t">
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => handleCopySummary(selectedRow)}
+                className="gap-1.5 text-xs bg-[#008751] hover:bg-[#006b40]"
+              >
+                {copied ? <><Check className="h-3.5 w-3.5" /> Copied Follow-Up!</> : <><Copy className="h-3.5 w-3.5" /> Copy Follow-Up Summary</>}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedRow(null)}
+                className="text-xs"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

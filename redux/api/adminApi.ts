@@ -26,6 +26,12 @@ export interface AdminVerificationItem {
   date_of_birth?: string;
   amount_charged?: number;
   success?: boolean;
+  status?: string;
+  reply?: string;
+  reference?: string;
+  refunded?: boolean;
+  refund_reason?: string;
+  refunded_at?: string;
   created_at: string;
   expires_at?: string;
   operator_name?: string;

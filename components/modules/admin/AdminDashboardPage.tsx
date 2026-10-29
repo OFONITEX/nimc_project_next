@@ -98,7 +98,7 @@ export function AdminDashboardPage() {
 
       if (findError || !userProfile) {
         setStatusMessage({
-          text: `User with email "${values.email}" not found in database. User must sign up first.`,
+          text: `User with email "${values.email}" was not found in the portal directory.`,
           type: 'error',
         });
         setIsSaving(false);
@@ -118,30 +118,40 @@ export function AdminDashboardPage() {
         setStatusMessage({ text: updateError.message, type: 'error' });
       } else {
         setStatusMessage({
-          text: `Successfully updated role and pricing for ${values.email}!`,
+          text: `Successfully configured role and pricing for ${values.email}!`,
           type: 'success',
         });
         refetchUsers();
       }
-    } catch {
-      setStatusMessage({ text: 'Network error updating agent profile', type: 'error' });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred';
+      setStatusMessage({ text: message, type: 'error' });
     } finally {
       setIsSaving(false);
     }
   };
 
   return (
-    <div className="space-y-4 max-w-5xl mx-auto">
-      {/* ── 1. Page Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
-        <div>
-          <h2 className="text-lg sm:text-xl font-black tracking-tight text-gray-900 flex items-center gap-2">
-            <Crown className="h-5 w-5 text-amber-500 shrink-0" />
-            Admin Management Portal
-          </h2>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Platform audit trail, global verification stream, agent pricing &amp; user management.
-          </p>
+    <ContentWidthContainer variant="wide" className="space-y-4 sm:space-y-5">
+      {/* ── 1. Admin Page Header Banner ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-black/10 pb-3 sm:pb-4">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#008751] to-[#005f38] text-white shadow-xs shrink-0">
+            <Crown className="h-5 w-5 sm:h-6 sm:w-6" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg sm:text-xl font-bold tracking-tight text-gray-900">
+                Admin Management Console
+              </h2>
+              <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-extrabold uppercase text-[#008751]">
+                Master Admin
+              </span>
+            </div>
+            <p className="text-xs text-gray-500">
+              Manage portal operators, configure custom rates, and monitor live verifications.
+            </p>
+          </div>
         </div>
 
         <Button
@@ -302,16 +312,10 @@ export function AdminDashboardPage() {
       )}
 
       {activeTab === 'agent' && (
-        <Card className="p-3 sm:p-4 border-t-4 border-t-purple-600 shadow-xs">
-          <div className="flex items-center gap-2 mb-3 pb-2.5 border-b border-black/10">
-            <UserPlus className="h-4 w-4 text-purple-600" />
-            <h3 className="text-xs sm:text-sm font-bold text-gray-900">
-              Assign Agent Role &amp; Custom Lookup Pricing
-            </h3>
-          </div>
+        <div className="mx-auto max-w-md">
           <AddAgentForm onSubmit={handleAddOrUpdateAgent} isLoading={isSaving} />
-        </Card>
+        </div>
       )}
-    </div>
+    </ContentWidthContainer>
   );
 }

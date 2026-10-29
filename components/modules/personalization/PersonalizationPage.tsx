@@ -13,11 +13,14 @@ import {
   Download,
   FileCheck,
   Loader2,
+  RefreshCw,
+  Zap,
 } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/redux/hooks';
 import { updateWalletBalance } from '@/redux/slices/authSlice';
 import { formatMoney } from '@/helpers/format/formatMoney';
 import { supabase } from '@/lib/supabase/client';
+import { LiveStatusReportModal, LiveStatusReport } from '@/components/ui/molecules/LiveStatusReportModal';
 
 export function PersonalizationPage() {
   const dispatch = useAppDispatch();
@@ -52,8 +55,108 @@ export function PersonalizationPage() {
     };
   } | null>(null);
   const [checkError, setCheckError] = React.useState<string | null>(null);
+  const [modalReport, setModalReport] = React.useState<LiveStatusReport | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  // History table state
+  const [historyRows, setHistoryRows] = React.useState<any[]>([]);
+  const [checkingRef, setCheckingRef] = React.useState<string | null>(null);
 
   if (!currentUser) return null;
+
+  // Role-based personalization pricing: Admin ₦150, Agent ₦300, Operator ₦1,000
+  const normalizedEmail = (currentUser.email || '').toLowerCase().trim();
+  const isAdmin = currentUser.role === 'admin' || normalizedEmail === 'brinoekanem@gmail.com';
+  const isAgent = currentUser.role === 'agent';
+  const personalizationCost = isAdmin ? 150 : isAgent ? 300 : 1000;
+
+  // Load personalization history from Supabase
+  const loadHistory = async () => {
+    if (!currentUser?.id) return [];
+    try {
+      let query = supabase
+        .from('verification_history')
+        .select('*')
+        .ilike('service_type', '%personalization%')
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (!isAdmin) {
+        query = query.eq('user_id', currentUser.id);
+      }
+      const { data } = await query;
+      setHistoryRows(data || []);
+      return data || [];
+    } catch (e) {
+      console.warn('Personalization history load error:', e);
+      return [];
+    }
+  };
+
+  // Check status for a single tracking ID via live NIMC gateway
+  const handleRowStatusCheck = async (tid: string) => {
+    if (!tid) return;
+    setCheckingRef(tid);
+
+    // Open modal in loading state right away so user sees live connection
+    setModalReport({
+      trackingId: tid,
+      serviceType: 'NIN Personalization',
+      status: 'processing',
+      reply: 'Connecting live to NIMC verification server...',
+      checkedAt: new Date().toLocaleTimeString(),
+    });
+    setIsModalOpen(true);
+    setIsChecking(true);
+
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      const resp = await fetch('/api/personalization-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ tracking_id: tid }),
+      });
+
+      const data = await resp.json();
+      setStatusResult(data);
+
+      setModalReport({
+        trackingId: tid,
+        reference: data.reference || tid,
+        serviceType: 'NIN Personalization',
+        status: data.status || (data.success ? 'completed' : 'pending'),
+        reply: data.reply || data.message || 'Status retrieved successfully.',
+        downloadUrl: data.download_url || data.pdf_url || null,
+        data: data.data || null,
+        checkedAt: new Date().toLocaleTimeString(),
+      });
+
+      await loadHistory();
+    } catch (err: any) {
+      setModalReport({
+        trackingId: tid,
+        serviceType: 'NIN Personalization',
+        status: 'failed',
+        reply: err.message || 'Unable to check status at this time.',
+        checkedAt: new Date().toLocaleTimeString(),
+      });
+    } finally {
+      setCheckingRef(null);
+      setIsChecking(false);
+    }
+  };
+
+  // Load history on mount
+  React.useEffect(() => {
+    loadHistory();
+  }, [currentUser?.id]);
 
   const handleSubmitPersonalization = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,6 +203,7 @@ export function PersonalizationPage() {
         });
         setCheckTrackingId(cleanTracking);
         setTrackingId('');
+        loadHistory();
 
         if (data.new_balance !== undefined) {
           dispatch(updateWalletBalance(data.new_balance));
@@ -128,6 +232,16 @@ export function PersonalizationPage() {
     setCheckError(null);
     setStatusResult(null);
 
+    // Open modal in loading state right away
+    setModalReport({
+      trackingId: cleanTracking,
+      serviceType: 'NIN Personalization',
+      status: 'processing',
+      reply: 'Connecting live to NIMC verification server...',
+      checkedAt: new Date().toLocaleTimeString(),
+    });
+    setIsModalOpen(true);
+
     try {
       const {
         data: { session },
@@ -149,15 +263,45 @@ export function PersonalizationPage() {
 
       const data = await resp.json();
 
+      if (data.refund?.new_balance !== undefined) {
+        dispatch(updateWalletBalance(data.refund.new_balance));
+      }
+
       if (data.success) {
         setStatusResult(data);
+        setModalReport({
+          trackingId: cleanTracking,
+          reference: data.reference || cleanTracking,
+          serviceType: 'NIN Personalization',
+          status: data.status || 'completed',
+          reply: data.reply || data.message || 'Status retrieved successfully.',
+          downloadUrl: data.download_url || data.pdf_url || null,
+          refund: data.refund || null,
+          data: data.data || null,
+          checkedAt: new Date().toLocaleTimeString(),
+        });
+        loadHistory();
       } else {
         setCheckError(data.error || 'Failed to retrieve personalization status.');
+        setModalReport({
+          trackingId: cleanTracking,
+          serviceType: 'NIN Personalization',
+          status: 'failed',
+          reply: data.error || 'Failed to retrieve personalization status from NIMC gateway.',
+          refund: data.refund || null,
+          checkedAt: new Date().toLocaleTimeString(),
+        });
       }
     } catch (err: any) {
-      setCheckError(
-        err.message || 'Network error checking personalization status.'
-      );
+      const errMsg = err.message || 'Network error checking personalization status.';
+      setCheckError(errMsg);
+      setModalReport({
+        trackingId: cleanTracking,
+        serviceType: 'NIN Personalization',
+        status: 'failed',
+        reply: errMsg,
+        checkedAt: new Date().toLocaleTimeString(),
+      });
     } finally {
       setIsChecking(false);
     }
@@ -167,6 +311,44 @@ export function PersonalizationPage() {
     statusResult &&
     (String(statusResult.status).toLowerCase() === 'completed' ||
       statusResult.personalized);
+
+  const getStatusBadge = (status?: string, createdAt?: string) => {
+    const s = String(status || '').toLowerCase();
+    let isFresh = false;
+    if (createdAt) {
+      const ageMinutes = (Date.now() - new Date(createdAt).getTime()) / (1000 * 60);
+      if (ageMinutes < 5) {
+        isFresh = true;
+      }
+    }
+
+    if ((s.includes('pending') || s.includes('submit')) && isFresh) {
+      return (
+        <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-100 px-2.5 py-1 text-[11px] font-bold text-amber-800 border border-amber-300">
+          <Clock className="h-3 w-3" /> PENDING
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-md bg-sky-100 px-2.5 py-1 text-[11px] font-bold text-sky-800 border border-sky-300">
+        <RefreshCw className="h-3 w-3 animate-spin" /> PROCESSING
+      </span>
+    );
+  };
+
+  const getSlipLabel = (serviceType?: string) => {
+    const st = String(serviceType || '').toLowerCase();
+    if (st.includes('vnin')) return 'VNIN';
+    if (st.includes('premium')) return 'Premium';
+    if (st.includes('standard')) return 'Standard';
+    if (st.includes('regular')) return 'Regular';
+    return 'Slip';
+  };
+
+  const pendingCount = historyRows.filter((r) => {
+    const s = String(r.status || '').toLowerCase();
+    return s.includes('pending') || s.includes('process') || s.includes('submitted');
+  }).length;
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
@@ -181,7 +363,7 @@ export function PersonalizationPage() {
               NIN Personalization
             </h2>
             <p className="text-xs sm:text-sm text-gray-500">
-              Generate &amp; download personalized NIN slips using Tracking ID | Fee: <strong className="text-[#008751]">₦1,000</strong>
+              Generate &amp; download personalized NIN slips using Tracking ID | Fee: <strong className="text-[#008751]">{formatMoney(personalizationCost)}</strong>
             </p>
           </div>
         </div>
@@ -220,7 +402,7 @@ export function PersonalizationPage() {
           <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
             <Send className="h-5 w-5 text-[#008751]" />
             <h3 className="font-extrabold text-base text-gray-900">
-              Request Personalization (₦1,000)
+              Request Personalization ({formatMoney(personalizationCost)})
             </h3>
           </div>
 
@@ -270,7 +452,7 @@ export function PersonalizationPage() {
                 </>
               ) : (
                 <>
-                  <PenTool className="h-4 w-4" /> Submit Personalization (₦1,000)
+                  <PenTool className="h-4 w-4" /> Submit Personalization ({formatMoney(personalizationCost)})
                 </>
               )}
             </button>
@@ -355,6 +537,8 @@ export function PersonalizationPage() {
               className={`rounded-xl border p-4 text-xs space-y-2.5 animate-in fade-in-50 ${
                 isCompleted
                   ? 'border-green-200 bg-green-50/90 text-green-900'
+                  : String(statusResult.status).toLowerCase().includes('fail')
+                  ? 'border-rose-200 bg-rose-50/90 text-rose-900'
                   : 'border-sky-200 bg-sky-50/90 text-sky-900'
               }`}
             >
@@ -362,20 +546,14 @@ export function PersonalizationPage() {
                 <span className="flex items-center gap-1.5">
                   {isCompleted ? (
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  ) : String(statusResult.status).toLowerCase().includes('fail') ? (
+                    <AlertCircle className="h-4 w-4 text-rose-600" />
                   ) : (
                     <Clock className="h-4 w-4 text-sky-600" />
                   )}
                   Status: {String(statusResult.status).toUpperCase()}
                 </span>
-                <span
-                  className={`rounded-full px-2.5 py-0.5 text-[10px] font-extrabold uppercase ${
-                    isCompleted
-                      ? 'bg-green-200 text-green-800'
-                      : 'bg-amber-200 text-amber-900'
-                  }`}
-                >
-                  {isCompleted ? 'COMPLETED' : 'PROCESSING'}
-                </span>
+                {getStatusBadge(statusResult.status)}
               </div>
 
               {statusResult.message && (
@@ -429,6 +607,108 @@ export function PersonalizationPage() {
           )}
         </div>
       </div>
+
+      {/* ── 4. Live Personalization Submissions Table ── */}
+      <div className="rounded-2xl border border-black/10 bg-white shadow-xs overflow-hidden">
+        <div className="p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+              <Clock className="h-4 w-4 text-[#008751]" /> Personalization Submissions History
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {isAdmin ? 'All operators\' personalization submissions history.' : 'Your personalization submissions history.'}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center rounded-md border border-gray-200 bg-gray-50 px-2 py-0.5 text-[10px] font-bold text-gray-500">
+              {historyRows.length} submissions
+            </span>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto -webkit-overflow-scrolling-touch">
+          {historyRows.length === 0 ? (
+            <div className="p-8 text-center text-xs text-gray-400 italic">
+              No personalization requests logged yet. Submit a tracking ID above to get started.
+            </div>
+          ) : (
+            <table className="w-full min-w-[700px] text-left text-xs">
+              <thead className="bg-gray-50 text-gray-500 font-bold border-b border-gray-100 uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th className="px-3 py-3">Date</th>
+                  {isAdmin && <th className="px-3 py-3">Submitted By</th>}
+                  <th className="px-3 py-3">Tracking ID</th>
+                  <th className="px-3 py-3">Slip Type</th>
+                  <th className="px-3 py-3">Fee</th>
+                  <th className="px-3 py-3">Status</th>
+                  <th className="px-3 py-3 max-w-[180px]">Details</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {historyRows.map((row) => (
+                  <tr key={row.id} className="hover:bg-gray-50/80 transition-colors">
+                    <td className="px-3 py-3 whitespace-nowrap text-gray-500 text-[11px]">
+                      {new Date(row.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' })}
+                      <div className="text-[10px] text-gray-400">
+                        {new Date(row.created_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </td>
+                    {isAdmin && (
+                      <td className="px-3 py-3 text-[11px] text-gray-800 truncate max-w-[140px]" title={row.user_email}>
+                        {row.user_email || '—'}
+                      </td>
+                    )}
+                    <td className="px-3 py-3 font-mono text-gray-900 font-bold text-[11px]">
+                      {row.query_value || '—'}
+                    </td>
+                    <td className="px-3 py-3 text-[11px]">
+                      <span className="inline-flex items-center rounded-md border border-violet-200 bg-violet-50 px-1.5 py-0.5 text-[9px] font-extrabold text-violet-700">
+                        {getSlipLabel(row.service_type)}
+                      </span>
+                    </td>
+                    <td className="px-3 py-3 font-bold text-[#008751] text-[11px]">
+                      {formatMoney(row.amount_charged || 0)}
+                    </td>
+                    <td className="px-3 py-3">
+                      {getStatusBadge(row.status, row.created_at)}
+                    </td>
+                    <td className="px-3 py-3 max-w-[180px]">
+                      {row.reply ? (
+                        <p className="text-[10px] text-gray-500 leading-tight truncate" title={row.reply}>
+                          {row.reply}
+                        </p>
+                      ) : (
+                        <span className="text-[10px] text-gray-300">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Table Footer */}
+        <div className="border-t border-gray-100 bg-gray-50 px-4 py-2.5 flex items-center justify-between text-[11px] text-gray-500">
+          <span>
+            Showing <strong>{historyRows.length}</strong> personalization submissions
+            {pendingCount > 0 && (
+              <> · <span className="text-amber-700 font-bold">{pendingCount} pending</span></>
+            )}
+          </span>
+          <span className="text-[10px] text-gray-400">NIMC gateway connection</span>
+        </div>
+      </div>
+
+      {/* ── Live Status Report Modal ── */}
+      <LiveStatusReportModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        isLoading={isChecking && !modalReport?.reply}
+        report={modalReport}
+        onRefresh={() => modalReport && handleRowStatusCheck(modalReport.trackingId)}
+      />
     </div>
   );
 }
+

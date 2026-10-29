@@ -29,6 +29,15 @@ export const demoVerifySchema = z.object({
 
 export type DemoVerifyFormValues = z.infer<typeof demoVerifySchema>;
 
+export const bvnVerifySchema = z.object({
+  mode: z.enum(['phone', 'bvn']).default('phone'),
+  phoneNumber: z.string().optional(),
+  bvn: z.string().optional(),
+  slipType: z.enum(['basic', 'plastic', 'regular_pro']).optional(),
+});
+
+export type BvnVerifyFormValues = z.infer<typeof bvnVerifySchema>;
+
 export const ninValidationSchema = z.object({
   nin: z
     .string()

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAppSelector } from '@/redux/hooks';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';

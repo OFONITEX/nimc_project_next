@@ -1,10 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import { FileCheck2, Hash, Phone, AlertCircle } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { FileCheck2, Hash, Phone, AlertCircle, CreditCard, Wallet } from 'lucide-react';
 import { useVerifyIdentityMutation, VerifyPayload } from '@/redux/api/verificationApi';
-import { NinVerificationData } from '@/models/verification/Verification';
+import { NinVerificationData, BvnVerificationData } from '@/models/verification/Verification';
 import { parseApiError } from '@/helpers/api/errorParser';
+import { useAppDispatch } from '@/redux/hooks';
+import { updateWalletBalance } from '@/redux/slices/authSlice';
 import { Card } from '@/components/ui/atoms/Card';
 import { Button } from '@/components/ui/atoms/Button';
 import { ContentWidthContainer } from '@/components/ui/molecules/ContentWidthContainer';
@@ -12,9 +15,22 @@ import { VerifyNinForm } from './VerifyNinForm';
 import { VerifyResultCard } from './VerifyResultCard';
 
 export function VerifyNinPage() {
-  const [activeTab, setActiveTab] = React.useState<'nin' | 'phone' | 'demo'>('nin');
-  const [resultData, setResultData] = React.useState<NinVerificationData | null>(null);
+  const searchParams = useSearchParams();
+  const dispatch = useAppDispatch();
+
+  const typeParam = searchParams.get('type');
+  const slipParam = searchParams.get('slip') || 'basic';
+
+  const [activeTab, setActiveTab] = React.useState<'nin' | 'phone' | 'demo' | 'bvn'>('nin');
+  const [resultData, setResultData] = React.useState<NinVerificationData | BvnVerificationData | null>(null);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [refundNotice, setRefundNotice] = React.useState<{ amount: number; new_balance: number } | null>(null);
+
+  React.useEffect(() => {
+    if (typeParam === 'bvn') {
+      setActiveTab('bvn');
+    }
+  }, [typeParam]);
 
   const [verifyIdentity, { isLoading, isError, error, reset }] = useVerifyIdentityMutation();
 
@@ -26,17 +42,31 @@ export function VerifyNinPage() {
 
   const handleVerifySubmit = async (payload: VerifyPayload) => {
     setErrorMessage(null);
+    setRefundNotice(null);
     setResultData(null);
     reset();
 
     try {
       const response = await verifyIdentity(payload).unwrap();
-      if (response.success && response.data) {
-        setResultData(response.data as NinVerificationData);
-      } else {
-        setErrorMessage(response.error || 'Verification query was not successful');
+
+      // If server returned updated wallet balance or refund
+      if (response.refund?.new_balance !== undefined) {
+        dispatch(updateWalletBalance(response.refund.new_balance));
+        setRefundNotice({
+          amount: response.refund.amount || response.amount_charged || 0,
+          new_balance: response.refund.new_balance,
+        });
+      } else if (response.new_balance !== undefined) {
+        dispatch(updateWalletBalance(response.new_balance));
       }
-    } catch (err) {
+
+      if (response.success && response.data) {
+        setResultData(response.data as NinVerificationData | BvnVerificationData);
+      } else {
+        const errorText = response.error || 'Verification query was not successful';
+        setErrorMessage(errorText);
+      }
+    } catch (err: unknown) {
       setErrorMessage(parseApiError(err, 'Failed to perform verification lookup'));
     }
   };
@@ -44,6 +74,7 @@ export function VerifyNinPage() {
   const handleReset = () => {
     setResultData(null);
     setErrorMessage(null);
+    setRefundNotice(null);
     reset();
   };
 
@@ -52,16 +83,24 @@ export function VerifyNinPage() {
       {/* Page Header */}
       <div>
         <h2 className="text-lg sm:text-xl font-black tracking-tight text-foreground flex items-center gap-2">
-          <FileCheck2 className="h-5 w-5 text-primary shrink-0" />
-          National Identity Number (NIN) Verification
+          {activeTab === 'bvn' ? (
+            <CreditCard className="h-5 w-5 text-purple-600 shrink-0" />
+          ) : (
+            <FileCheck2 className="h-5 w-5 text-primary shrink-0" />
+          )}
+          {activeTab === 'bvn'
+            ? 'Bank Verification Number (BVN) Retrieval'
+            : 'National Identity Number (NIN) Verification'}
         </h2>
         <p className="text-xs text-muted-foreground mt-0.5">
-          Perform instant NIMC verification by NIN Number, Registered Phone Number, or Demographics.
+          {activeTab === 'bvn'
+            ? 'Instant BVN identity record retrieval and slip printing with automatic refund protection.'
+            : 'Perform instant NIMC verification by NIN Number, Registered Phone Number, or Demographics.'}
         </p>
       </div>
 
       {resultData ? (
-        <VerifyResultCard data={resultData} onReset={handleReset} />
+        <VerifyResultCard data={resultData as NinVerificationData} onReset={handleReset} />
       ) : (
         <div className="space-y-4">
           {/* Verification Tabs */}
@@ -72,6 +111,7 @@ export function VerifyNinPage() {
               onClick={() => {
                 setActiveTab('nin');
                 setErrorMessage(null);
+                setRefundNotice(null);
               }}
               className="gap-1.5 text-xs h-8"
             >
@@ -83,6 +123,7 @@ export function VerifyNinPage() {
               onClick={() => {
                 setActiveTab('phone');
                 setErrorMessage(null);
+                setRefundNotice(null);
               }}
               className="gap-1.5 text-xs h-8"
             >
@@ -94,15 +135,38 @@ export function VerifyNinPage() {
               onClick={() => {
                 setActiveTab('demo');
                 setErrorMessage(null);
+                setRefundNotice(null);
               }}
               className="gap-1.5 text-xs h-8"
             >
               <FileCheck2 className="h-3.5 w-3.5" /> Verify by Demographics
             </Button>
+            <Button
+              variant={activeTab === 'bvn' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => {
+                setActiveTab('bvn');
+                setErrorMessage(null);
+                setRefundNotice(null);
+              }}
+              className="gap-1.5 text-xs h-8"
+            >
+              <CreditCard className="h-3.5 w-3.5" /> Verify by BVN
+            </Button>
           </div>
 
           {/* Form Card */}
           <Card className="p-3 sm:p-4 border-t-4 border-t-primary shadow-xs">
+            {refundNotice && (
+              <div className="mb-3 flex items-center gap-2 rounded-lg border border-emerald-300 bg-emerald-50 p-2.5 text-xs text-emerald-800">
+                <Wallet className="h-4 w-4 shrink-0 text-emerald-600" />
+                <span>
+                  <strong>Automatic Refund:</strong> ₦{refundNotice.amount.toLocaleString()} has been
+                  refunded to your wallet. New balance: ₦{refundNotice.new_balance.toLocaleString()}.
+                </span>
+              </div>
+            )}
+
             {errorMessage && (
               <div className="mb-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs text-red-600">
                 <AlertCircle className="h-4 w-4 shrink-0" />
@@ -112,6 +176,7 @@ export function VerifyNinPage() {
 
             <VerifyNinForm
               activeTab={activeTab}
+              initialSlip={slipParam}
               onSubmit={handleVerifySubmit}
               isLoading={isLoading}
             />

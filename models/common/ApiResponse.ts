@@ -4,4 +4,11 @@ export interface ApiResponse<T = unknown> {
   error?: string;
   message?: string;
   amount_charged?: number;
+  new_balance?: number;
+  refunded?: boolean;
+  refund?: {
+    amount?: number;
+    new_balance?: number;
+    reason?: string;
+  };
 }

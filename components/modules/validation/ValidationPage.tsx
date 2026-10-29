@@ -28,6 +28,7 @@ import { Input } from '@/components/ui/atoms/Input';
 import { ContentWidthContainer } from '@/components/ui/molecules/ContentWidthContainer';
 import { formatMoney } from '@/helpers/format/formatMoney';
 import { supabase } from '@/lib/supabase/client';
+import { LiveStatusReportModal, LiveStatusReport } from '@/components/ui/molecules/LiveStatusReportModal';
 
 export type ValidationType = 'no-record' | 'sim' | 'photo' | 'modification';
 
@@ -43,6 +44,8 @@ export function ValidationPage() {
   const [checkingRef, setCheckingRef] = React.useState<string | null>(null);
   const [submitMessage, setSubmitMessage] = React.useState<{ type: 'success' | 'error'; text: string; ref?: string } | null>(null);
   const [statusResult, setStatusResult] = React.useState<{ ref: string; status: string; date?: string; note?: string } | null>(null);
+  const [modalReport, setModalReport] = React.useState<LiveStatusReport | null>(null);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [historyRows, setHistoryRows] = React.useState<any[]>([]);
 
   const isAdmin = currentUser?.email === 'brinoekanem@gmail.com' || currentUser?.role === 'admin';
@@ -187,6 +190,16 @@ export function ValidationPage() {
     setCheckingRef(cleanRef);
     setStatusResult(null);
 
+    // Open modal in loading state right away
+    setModalReport({
+      trackingId: cleanRef,
+      serviceType: 'NIN Validation',
+      status: 'processing',
+      reply: 'Connecting to NIMC verification server...',
+      checkedAt: new Date().toLocaleTimeString(),
+    });
+    setIsModalOpen(true);
+
     try {
       const {
         data: { session },
@@ -204,26 +217,45 @@ export function ValidationPage() {
 
       const data = await resp.json();
 
-      if (data.success) {
-        setStatusResult({
-          ref: data.reference || cleanRef,
-          status: (data.status || 'PENDING').toUpperCase(),
-          date: new Date().toLocaleTimeString(),
-          note: data.reply || 'Validation is in progress with NIMC services.',
-        });
-        loadValidationHistory();
-      } else {
-        setStatusResult({
-          ref: cleanRef,
-          status: 'NOT FOUND',
-          note: data.error || 'No active validation found with this reference code.',
-        });
+      if (data.refund?.new_balance !== undefined) {
+        dispatch(updateWalletBalance(data.refund.new_balance));
       }
+
+      const repStatus = (data.status || (data.success ? 'completed' : 'pending')).toUpperCase();
+      const repReply = data.reply || (data.success ? 'Validation completed successfully.' : 'Validation request is currently being processed by NIMC gateway agents.');
+
+      setStatusResult({
+        ref: data.reference || cleanRef,
+        status: repStatus,
+        date: new Date().toLocaleTimeString(),
+        note: repReply,
+      });
+
+      setModalReport({
+        trackingId: cleanRef,
+        reference: data.reference || cleanRef,
+        serviceType: 'NIN Validation',
+        status: data.status || (data.success ? 'completed' : 'pending'),
+        reply: repReply,
+        refund: data.refund || null,
+        data: data.data || null,
+        checkedAt: new Date().toLocaleTimeString(),
+      });
+
+      loadValidationHistory();
     } catch (err: any) {
+      const errMsg = err.message || 'Unable to check status at this time. Please retry shortly.';
       setStatusResult({
         ref: cleanRef,
         status: 'ERROR',
-        note: err.message || 'Unable to check status at this time. Please retry shortly.',
+        note: errMsg,
+      });
+      setModalReport({
+        trackingId: cleanRef,
+        serviceType: 'NIN Validation',
+        status: 'failed',
+        reply: errMsg,
+        checkedAt: new Date().toLocaleTimeString(),
       });
     } finally {
       setIsChecking(false);
@@ -231,32 +263,26 @@ export function ValidationPage() {
     }
   };
 
-  const getProgressBadge = (status?: string) => {
-    const s = String(status || 'pending').toLowerCase();
-    if (s.includes('success') || s.includes('complete')) {
-      return (
-        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800 border border-emerald-300">
-          <CheckCircle2 className="h-3 w-3" /> Step 3/3: COMPLETED
-        </span>
-      );
+  const getProgressBadge = (status?: string, createdAt?: string) => {
+    const s = String(status || '').toLowerCase();
+    let isFresh = false;
+    if (createdAt) {
+      const ageMinutes = (Date.now() - new Date(createdAt).getTime()) / (1000 * 60);
+      if (ageMinutes < 5) {
+        isFresh = true;
+      }
     }
-    if (s.includes('process')) {
+
+    if ((s.includes('pending') || s.includes('submit')) && isFresh) {
       return (
-        <span className="inline-flex items-center gap-1 rounded-md bg-sky-100 px-2 py-0.5 text-[10px] font-black text-sky-800 border border-sky-300">
-          <RefreshCw className="h-3 w-3 animate-spin" /> Step 2/3: PROCESSING
-        </span>
-      );
-    }
-    if (s.includes('fail') || s.includes('reject')) {
-      return (
-        <span className="inline-flex items-center gap-1 rounded-md bg-rose-100 px-2 py-0.5 text-[10px] font-black text-rose-800 border border-rose-300">
-          <AlertCircle className="h-3 w-3" /> FAILED
+        <span className="inline-flex items-center gap-1.5 rounded-md bg-amber-100 px-2.5 py-1 text-[11px] font-bold text-amber-800 border border-amber-300">
+          <Clock className="h-3 w-3" /> PENDING
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2 py-0.5 text-[10px] font-black text-amber-800 border border-amber-300">
-        <Clock className="h-3 w-3" /> Step 1/3: PENDING REVIEW
+      <span className="inline-flex items-center gap-1.5 rounded-md bg-sky-100 px-2.5 py-1 text-[11px] font-bold text-sky-800 border border-sky-300">
+        <RefreshCw className="h-3 w-3 animate-spin" /> PROCESSING
       </span>
     );
   };
@@ -285,7 +311,7 @@ export function ValidationPage() {
               ) : null}
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-              Submit your NIN for validation &amp; check live processing status | Fee:{' '}
+              Submit your NIN for validation &amp; check processing status | Fee:{' '}
               <strong className="text-[#008751] font-extrabold">{priceDisplay}</strong>
             </p>
           </div>
@@ -407,10 +433,10 @@ export function ValidationPage() {
           <div className="pb-3 border-b border-border flex items-center justify-between">
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
               <Search className="h-4 w-4 text-sky-600" />
-              Check Live Validation Status
+              Check Validation Status
             </h3>
             <Badge variant="outline" className="text-[10px] text-sky-700 border-sky-200 bg-sky-50">
-              Live Gateway Query
+              Gateway Query
             </Badge>
           </div>
 
@@ -428,7 +454,7 @@ export function ValidationPage() {
                 required
               />
               <p className="text-[11px] text-muted-foreground mt-1">
-                Enter your reference code to check real-time progress from the provider.
+                Enter your reference code to check progress from the provider.
               </p>
             </div>
 
@@ -438,7 +464,7 @@ export function ValidationPage() {
               isLoading={isChecking}
               className="w-full h-11 font-bold text-sm border-gray-300 text-gray-800 hover:bg-gray-50"
             >
-              {isChecking ? 'Checking Live Status...' : 'Check Status'}
+              {isChecking ? 'Checking Status...' : 'Check Status'}
             </Button>
           </form>
 
@@ -479,10 +505,10 @@ export function ValidationPage() {
         <div className="p-4 sm:p-5 border-b border-border flex items-center justify-between flex-wrap gap-2">
           <div>
             <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <Clock className="h-4 w-4 text-[#008751]" /> Validation Requests &amp; Live Progress
+              <Clock className="h-4 w-4 text-[#008751]" /> Validation Requests History
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Live status tracking for all submitted NIN validation records.
+              Status tracking for all submitted NIN validation records.
             </p>
           </div>
           <Badge variant="outline" className="text-xs font-bold text-muted-foreground">
@@ -505,7 +531,6 @@ export function ValidationPage() {
                   <th className="px-4 py-3">Validation Type</th>
                   <th className="px-4 py-3">Progress / Status</th>
                   <th className="px-4 py-3">Latest Response / Reply</th>
-                  <th className="px-4 py-3 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -524,29 +549,10 @@ export function ValidationPage() {
                       {(row.service_type || '').replace('validation_', '').replace(/_/g, ' ')}
                     </td>
                     <td className="px-4 py-3">
-                      {getProgressBadge(row.status)}
+                      {getProgressBadge(row.status, row.created_at)}
                     </td>
                     <td className="px-4 py-3 text-muted-foreground max-w-xs truncate" title={row.reply || ''}>
                       {row.reply || 'Pending processing'}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      {row.reference ? (
-                        <button
-                          type="button"
-                          onClick={() => handleCheckStatus(undefined, row.reference)}
-                          disabled={checkingRef === row.reference}
-                          className="inline-flex items-center gap-1 text-[11px] font-bold text-[#008751] hover:underline cursor-pointer disabled:opacity-50"
-                        >
-                          {checkingRef === row.reference ? (
-                            <RefreshCw className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <RefreshCw className="h-3 w-3" />
-                          )}
-                          Check Status
-                        </button>
-                      ) : (
-                        <span className="text-[11px] text-muted-foreground">—</span>
-                      )}
                     </td>
                   </tr>
                 ))}
@@ -555,6 +561,15 @@ export function ValidationPage() {
           )}
         </div>
       </div>
+
+      {/* ── Live Status Report Modal ── */}
+      <LiveStatusReportModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        isLoading={isChecking && !modalReport?.reply}
+        report={modalReport}
+        onRefresh={() => modalReport && handleCheckStatus(undefined, modalReport.trackingId)}
+      />
     </ContentWidthContainer>
   );
 }
