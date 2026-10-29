@@ -3,15 +3,27 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Clock } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import { LoginFormValues } from '@/schemas/auth';
 import { LoginForm } from './LoginForm';
 
 export function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [sessionTimedOut, setSessionTimedOut] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isTimeout = sessionStorage.getItem('portal_inactivity_logout');
+      if (isTimeout === 'true') {
+        setSessionTimedOut(true);
+        // Clear immediately so refreshing or manual revisit does not persist the banner
+        sessionStorage.removeItem('portal_inactivity_logout');
+      }
+    }
+  }, []);
 
   const handleLoginSubmit = async (values: LoginFormValues) => {
     setIsLoading(true);
@@ -26,6 +38,10 @@ export function LoginPage() {
       if (error) {
         setErrorMessage(error.message || 'Invalid email or password');
       } else if (data.user) {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('portal_last_activity_timestamp', Date.now().toString());
+          sessionStorage.removeItem('portal_inactivity_logout');
+        }
         router.push('/dashboard');
       }
     } catch {
@@ -63,6 +79,18 @@ export function LoginPage() {
             Sign in to your myninverify account
           </p>
         </div>
+
+        {sessionTimedOut && (
+          <div className="mb-4 flex items-start gap-3 rounded-2xl border border-amber-300 bg-amber-50/90 p-3.5 text-amber-900 shadow-xs">
+            <Clock className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="text-xs sm:text-sm font-bold text-amber-950 leading-tight">Session Timed Out</h4>
+              <p className="text-xs text-amber-800 mt-0.5 leading-relaxed">
+                You were logged out after 12 hours of inactivity for account security. Please sign in again.
+              </p>
+            </div>
+          </div>
+        )}
 
         {errorMessage && (
           <div className="mb-3 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-2.5 text-xs font-medium text-red-600">

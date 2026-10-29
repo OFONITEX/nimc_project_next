@@ -6,6 +6,12 @@ import { store } from '@/redux/store';
 import { setAuthUser, setAuthLoading, clearAuth } from '@/redux/slices/authSlice';
 import { supabase } from '@/lib/supabase/client';
 import { UserProfile, UserRole } from '@/models/user/User';
+import {
+  InactivityTracker,
+  INACTIVITY_TIMEOUT_MS,
+  LAST_ACTIVITY_KEY,
+  INACTIVITY_FLAG_KEY,
+} from '@/components/layout/InactivityTracker';
 
 function AuthStateSync({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
@@ -50,8 +56,29 @@ function AuthStateSync({ children }: { children: React.ReactNode }) {
     async function initSession() {
       try {
         store.dispatch(setAuthLoading(true));
+
+        // Check 12-hour inactivity timeout on initial session restore
+        if (typeof window !== 'undefined') {
+          const storedActivity = localStorage.getItem(LAST_ACTIVITY_KEY);
+          if (storedActivity) {
+            const elapsed = Date.now() - parseInt(storedActivity, 10);
+            if (elapsed >= INACTIVITY_TIMEOUT_MS) {
+              console.log('[Auth] Session expired due to 12 hours of inactivity.');
+              localStorage.removeItem(LAST_ACTIVITY_KEY);
+              sessionStorage.setItem(INACTIVITY_FLAG_KEY, 'true');
+              await supabase.auth.signOut();
+              store.dispatch(clearAuth());
+              store.dispatch(setAuthLoading(false));
+              return;
+            }
+          }
+        }
+
         const { data: { session } } = await supabase.auth.getSession();
         if (session && session.user && session.user.email) {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
+          }
           await fetchAndSetUser(session.user.id, session.user.email);
         } else {
           store.dispatch(clearAuth());
@@ -66,7 +93,11 @@ function AuthStateSync({ children }: { children: React.ReactNode }) {
 
     initSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && typeof window !== 'undefined') {
+        localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
+        sessionStorage.removeItem(INACTIVITY_FLAG_KEY);
+      }
       if (session && session.user && session.user.email) {
         await fetchAndSetUser(session.user.id, session.user.email);
       } else {
@@ -86,6 +117,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <Provider store={store}>
       <AuthStateSync>
+        <InactivityTracker />
         {children}
       </AuthStateSync>
     </Provider>

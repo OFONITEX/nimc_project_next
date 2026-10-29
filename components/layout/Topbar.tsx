@@ -22,6 +22,10 @@ export function Topbar() {
   const isAgent = currentUser.role === 'agent';
 
   const handleLogout = async () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('portal_last_activity_timestamp');
+      sessionStorage.removeItem('portal_inactivity_logout');
+    }
     await supabase.auth.signOut();
     dispatch(clearAuth());
     router.push('/login');
