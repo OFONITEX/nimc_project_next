@@ -46,6 +46,7 @@ export function Sidebar() {
     { href: '/ipe', label: 'IPE Services', icon: <FileText className="h-4 w-4 shrink-0" />, route: '/ipe' },
     { href: '/jamb', label: 'JAMB Services', icon: <GraduationCap className="h-4 w-4 shrink-0" />, route: '/jamb' },
     { href: '/correction', label: 'Data Correction', icon: <FileEdit className="h-4 w-4 shrink-0" />, route: '/correction' },
+    { href: 'https://myninverify.com/developer/documentation', label: 'Developer API', icon: <CodeXml className="h-4 w-4 shrink-0" />, route: '/developer' },
   ];
 
   const supportLinks = [
