@@ -95,14 +95,17 @@ export async function POST(request: NextRequest) {
     }
 
     const rawMsg = String(providerResJson?.message || providerResJson?.reply || providerResJson?.error || '').trim();
-    const isNotFound = /not\s*found|invalid\s*tracking|incorrect\s*tracking|no\s*record/i.test(rawMsg);
+    // Only skip charging when provider explicitly rejects the tracking ID as invalid/not found.
+    // Do NOT skip when status is false but the submission was accepted (Special IPE queues as pending).
+    const isHardRejection =
+      /not\s*found|invalid\s*tracking|incorrect\s*tracking/i.test(rawMsg);
 
-    // If upstream actively rejected or failed upfront, reject without charging the customer
-    if (providerResJson && (providerResJson.status === false || isNotFound)) {
-      const errMsg = isNotFound
-        ? 'Incorrect Tracking ID: No matching enrollment record found on NIMC server. Please verify the characters on the slip.'
-        : rawMsg || 'IPE Clearance request rejected by provider gateway.';
-      return NextResponse.json({ success: false, error: errMsg }, { status: 400 });
+    // If upstream hard-rejected the tracking ID, reject without charging the customer
+    if (providerResJson && isHardRejection) {
+      return NextResponse.json(
+        { success: false, error: 'Incorrect Tracking ID: No matching enrollment record found on NIMC server. Please verify the characters on the slip.' },
+        { status: 400 }
+      );
     }
 
     // 5. Deduct wallet only on successful / accepted upstream submission
